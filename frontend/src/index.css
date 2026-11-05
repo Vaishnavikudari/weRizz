@@ -19,17 +19,47 @@
   font-display: swap;
 }
 
+html {
+  font-size: 140% !important; /* Globally increases font sizes for maximum readability across every page */
+}
+
+/* Ensure explicit pixel text classes also scale up accordingly */
+[class*="text-[9px]"] {
+  font-size: 12.6px !important;
+}
+[class*="text-[10px]"] {
+  font-size: 14px !important;
+}
+[class*="text-[11px]"] {
+  font-size: 15.4px !important;
+}
+[class*="text-[44px]"] {
+  font-size: 61.6px !important;
+}
+[class*="text-[62px]"] {
+  font-size: 86.8px !important;
+}
+
 :root {
   font-family: 'Plus Jakarta Sans', 'Montserrat', Inter, system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: dark;
-  color: #f4f4f2;
-  background-color: #0b0b0c;
+  color: #FFFFFF;
+  background-color: #070D1E;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --royal-base: #070D1E;
+  --royal-dark: #0B1736;
+  --royal-mid: #102554;
+  --royal-accent: #2563EB;
+  --coral-accent: #FF6B5B;
+  --cloud-white: #FFFFFF;
+  --text-main: #FFFFFF;
+  --text-muted: rgba(226, 232, 240, 0.75);
 }
 
 body {
@@ -38,9 +68,138 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #0b0b0c;
-  color: #f4f4f2;
+  background-color: #070D1E;
+  color: #FFFFFF;
   font-family: 'Plus Jakarta Sans', 'Montserrat', Inter, system-ui, sans-serif;
+}
+
+::selection {
+  background-color: rgba(255, 107, 91, 0.35);
+  color: #FFFFFF;
+}
+
+/* Ribbed-glass thin vertical stripe overlay - non-interactive architectural fine texture */
+.ribbed-glass-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.022) 0px,
+    rgba(255, 255, 255, 0.022) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  opacity: 0.65;
+}
+
+/* Dark Royal Blue Canvas */
+.royal-cloud-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: radial-gradient(ellipse 90% 80% at 50% 15%, #0e1e4a 0%, #08112d 50%, #050a1b 100%);
+}
+
+/* Continuous Seamless Left-to-Right Cloud Stream */
+.continuous-cloud-stream {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.continuous-cloud {
+  position: absolute;
+  top: 10%;
+  left: 0;
+  width: 1400px;
+  height: 520px;
+  border-radius: 46%;
+  pointer-events: none;
+  will-change: transform;
+  mix-blend-mode: screen;
+  filter: blur(52px);
+  background: 
+    /* 1. Luminous Pure White Cloud Torso & Lobe */
+    radial-gradient(ellipse 52% 44% at 36% 50%, rgba(255, 255, 255, 0.54) 0%, rgba(240, 248, 255, 0.28) 38%, transparent 72%),
+    radial-gradient(ellipse 40% 36% at 20% 54%, rgba(255, 255, 255, 0.42) 0%, rgba(219, 234, 254, 0.20) 42%, transparent 70%),
+    
+    /* 2. Soft Warm Coral Glow nestled in the cloud (from Tidewell photo) */
+    radial-gradient(circle at 62% 48%, rgba(255, 107, 91, 0.58) 0%, rgba(255, 107, 91, 0.28) 32%, rgba(255, 107, 91, 0.09) 55%, transparent 72%),
+    radial-gradient(ellipse 44% 34% at 75% 52%, rgba(255, 128, 115, 0.32) 0%, rgba(255, 107, 91, 0.14) 42%, transparent 70%),
+    
+    /* 3. Soft Upper & Lower Cloud Feathering */
+    radial-gradient(ellipse 46% 32% at 48% 34%, rgba(255, 255, 255, 0.44) 0%, rgba(255, 200, 190, 0.18) 35%, transparent 70%),
+    radial-gradient(ellipse 50% 34% at 52% 66%, rgba(240, 248, 255, 0.34) 0%, rgba(255, 107, 91, 0.16) 40%, transparent 70%);
+}
+
+.continuous-cloud-lower {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1450px;
+  height: 520px;
+  border-radius: 46%;
+  pointer-events: none;
+  will-change: transform;
+  mix-blend-mode: screen;
+  filter: blur(56px);
+  background: 
+    /* Warm Coral & White in lower drifting stream */
+    radial-gradient(circle at 44% 48%, rgba(255, 107, 91, 0.50) 0%, rgba(255, 107, 91, 0.24) 34%, transparent 70%),
+    radial-gradient(ellipse 54% 42% at 68% 46%, rgba(255, 255, 255, 0.46) 0%, rgba(240, 248, 255, 0.24) 38%, transparent 72%),
+    radial-gradient(ellipse 46% 36% at 26% 54%, rgba(255, 255, 255, 0.38) 0%, rgba(219, 234, 254, 0.18) 42%, transparent 70%),
+    radial-gradient(ellipse 48% 32% at 55% 62%, rgba(255, 128, 115, 0.28) 0%, rgba(255, 107, 91, 0.12) 42%, transparent 70%);
+}
+
+/* Staggered seamless instances for an infinite unbroken stream */
+.cloud-loop-1 {
+  animation: continuousLeftToRight 34s linear infinite;
+}
+
+.cloud-loop-2 {
+  animation: continuousLeftToRight 34s linear infinite;
+  animation-delay: -11.33s;
+}
+
+.cloud-loop-3 {
+  animation: continuousLeftToRight 34s linear infinite;
+  animation-delay: -22.66s;
+}
+
+.cloud-loop-4 {
+  animation: continuousLeftToRight 38s linear infinite;
+  animation-delay: -7s;
+}
+
+.cloud-loop-5 {
+  animation: continuousLeftToRight 38s linear infinite;
+  animation-delay: -26s;
+}
+
+/* Seamless Left-to-Right Continuous Loop Keyframes */
+@keyframes continuousLeftToRight {
+  0% {
+    transform: translate3d(-1350px, -20px, 0) scale(0.96);
+  }
+  25% {
+    transform: translate3d(calc(25vw - 1000px), 25px, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(calc(50vw - 650px), -22px, 0) scale(0.98);
+  }
+  75% {
+    transform: translate3d(calc(75vw - 300px), 20px, 0) scale(1.03);
+  }
+  100% {
+    transform: translate3d(calc(100vw + 200px), -10px, 0) scale(0.96);
+  }
 }
 
 /* Headings uniformly use The Seasons & Instrument Serif */
@@ -58,10 +217,10 @@ h1, h2, h3, h4, .font-serif, .font-seasons, .font-editorial {
 /* Clean luxury tracking for overlines & category tags */
 .font-mono-tag {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 11px;
+  font-size: 15.4px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #8d8d92;
+  color: #94A3B8;
 }
 
 /* Sleek Minimal Scrollbar */
@@ -73,9 +232,9 @@ h1, h2, h3, h4, .font-serif, .font-seasons, .font-editorial {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(244, 244, 242, 0.12);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(244, 244, 242, 0.25);
+  background: rgba(255, 255, 255, 0.3);
 }

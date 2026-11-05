@@ -10,7 +10,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
         <>
             <header className="topnav">
                 <div className="nav-brand" onClick={() => onViewChange('landing')} style={{ cursor: 'pointer' }}>
-                    <Brain size={22} color="#f4f4f2" strokeWidth={1.75} />
+                    <Brain size={22} color="#60A5FA" strokeWidth={1.75} />
                     <span className="brand-text">Mavora</span>
                     {isPatientSession && (
                         <span className="mode-badge">Patient Space</span>
@@ -128,8 +128,10 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             left: 0;
             width: 100%;
             height: 70px;
-            background: #0b0b0c;
-            border-bottom: 1px solid rgba(244, 244, 242, 0.10);
+            background: rgba(7, 13, 30, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -147,7 +149,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             font-size: 1.35rem;
             font-weight: 600;
             letter-spacing: 0.02em;
-            color: #f4f4f2;
+            color: #FFFFFF;
         }
         .mode-badge {
             font-size: 0.65rem;
@@ -156,9 +158,9 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             letter-spacing: 0.16em;
             padding: 3px 9px;
             border-radius: 9999px;
-            color: #a1a1aa;
-            border: 1px solid rgba(244, 244, 242, 0.12);
-            background: #141415;
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(14, 28, 70, 0.65);
         }
         
         .nav-links {
@@ -173,7 +175,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             padding: 7px 14px;
             border-radius: 6px;
             cursor: pointer;
-            color: #8d8d92;
+            color: rgba(226, 232, 240, 0.75);
             font-weight: 500;
             transition: color 150ms ease-out, background-color 150ms ease-out;
             font-size: 0.82rem;
@@ -182,40 +184,41 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             white-space: nowrap;
         }
         .nav-item:hover {
-            background: rgba(244, 244, 242, 0.05);
-            color: #f4f4f2;
+            background: rgba(255, 255, 255, 0.08);
+            color: #FFFFFF;
         }
         .nav-item.active {
-            background: #18181b;
-            color: #f4f4f2;
-            border-color: rgba(244, 244, 242, 0.12);
+            background: rgba(255, 255, 255, 0.12);
+            color: #FFFFFF;
+            border-color: rgba(255, 255, 255, 0.20);
         }
         .patient-launch {
-            background: #f4f4f2;
-            color: #0b0b0c;
-            font-weight: 500;
-            border: 1px solid #f4f4f2;
+            background: #FFFFFF;
+            color: #070D1E;
+            font-weight: 600;
+            border: 1px solid #FFFFFF;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.28);
         }
         .patient-launch:hover {
-            background: #e2e2e0;
-            color: #0b0b0c;
+            background: #EEF4FF;
+            color: #070D1E;
         }
         .family-launch {
             background: transparent;
-            color: #f4f4f2;
-            border: 1px solid rgba(244, 244, 242, 0.18);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
         .family-launch:hover {
-            background: rgba(244, 244, 242, 0.05);
-            color: #f4f4f2;
-            border-color: rgba(244, 244, 242, 0.30);
+            background: rgba(255, 255, 255, 0.08);
+            color: #FFFFFF;
+            border-color: rgba(255, 255, 255, 0.45);
         }
         .exit-item {
-            color: #8d8d92;
+            color: rgba(226, 232, 240, 0.65);
         }
         .exit-item:hover {
-            color: #f87171;
-            background: rgba(239, 68, 68, 0.08);
+            color: #93C5FD;
+            background: rgba(96, 165, 250, 0.12);
         }
       `}</style>
         </>

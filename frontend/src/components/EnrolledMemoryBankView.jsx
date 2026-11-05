@@ -148,9 +148,9 @@ const EnrolledMemoryBankView = ({ onBack, onEnrollNew, onSpeakText }) => {
     });
 
     return (
-        <div className="flex flex-col h-full w-full bg-[#0b0b0c] backdrop-blur-xl border-l border-white/5 relative overflow-y-auto">
+        <div className="flex flex-col h-full w-full bg-transparent backdrop-blur-xl border-l border-white/10 relative overflow-y-auto">
             {/* Header */}
-            <div className="p-3.5 px-6 border-b border-white/5 flex items-center justify-between bg-[#121214] sticky top-0 z-10 flex-shrink-0">
+            <div className="p-3.5 px-6 border-b border-white/5 flex items-center justify-between bg-[#0B1736]/75 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 flex-shrink-0">
                 <div className="flex items-center gap-3">
                     {onBack && (
                         <button
@@ -174,7 +174,7 @@ const EnrolledMemoryBankView = ({ onBack, onEnrollNew, onSpeakText }) => {
                     {onEnrollNew && (
                         <button
                             onClick={onEnrollNew}
-                            className="px-3 py-1.5 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] font-semibold rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                            className="px-3 py-1.5 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-[#FF6B5B]/30 transition-all active:scale-95 cursor-pointer"
                         >
                             <UserPlus size={14} />
                             <span>Enroll New</span>

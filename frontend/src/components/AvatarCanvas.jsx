@@ -327,10 +327,10 @@ const KirbyAvatar = ({ isSpeaking, isProcessing }) => {
 
 const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) => {
     return (
-        <div className="flex flex-col justify-between items-center h-full w-full bg-[#0b0b0c] overflow-hidden relative border-r border-white/10 select-none">
+        <div className="flex flex-col justify-between items-center h-full w-full bg-transparent overflow-hidden relative border-r border-white/10 select-none">
             
             {/* Background subtle vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(155,138,251,0.06)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,107,91,0.12)_0%,transparent_70%)] pointer-events-none" />
 
             {/* Avatar Stage Container */}
             <div className="relative z-10 flex flex-col items-center justify-between h-full w-full py-6 px-4">
@@ -345,12 +345,12 @@ const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) =
 
                     {/* Status Badge */}
                     {isSpeaking ? (
-                        <div className="px-3.5 py-1 bg-[#141415] border border-emerald-500/30 rounded-full flex items-center gap-2">
+                        <div className="px-3.5 py-1 bg-[#0B1736]/75 border border-emerald-500/40 backdrop-blur-md rounded-full flex items-center gap-2">
                             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                             <span className="text-emerald-300 text-[11px] font-mono tracking-wider uppercase">Speaking</span>
                         </div>
                     ) : isProcessing ? (
-                        <div className="px-3.5 py-1 bg-[#141415] border border-white/20 rounded-full flex items-center gap-2">
+                        <div className="px-3.5 py-1 bg-[#0B1736]/75 border border-white/20 backdrop-blur-md rounded-full flex items-center gap-2">
                             <div className="flex gap-1">
                                 <span className="w-1 h-1 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
                                 <span className="w-1 h-1 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
@@ -361,7 +361,7 @@ const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) =
                             </span>
                         </div>
                     ) : (
-                        <div className="px-3.5 py-1 bg-[#141415] border border-white/10 rounded-full flex items-center gap-2">
+                        <div className="px-3.5 py-1 bg-[#0B1736]/75 border border-white/15 backdrop-blur-md rounded-full flex items-center gap-2">
                             <span className="w-1.5 h-1.5 bg-[#8d8d92] rounded-full" />
                             <span className="text-[#8d8d92] text-[11px] font-mono tracking-wider uppercase">Listening</span>
                         </div>
@@ -375,7 +375,7 @@ const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) =
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -8 }}
-                                className="bg-[#141415] text-[#f4f4f2] text-center px-4 py-2 rounded-xl border border-white/10 max-w-sm"
+                                className="bg-[#0B1736]/80 text-[#f4f4f2] text-center px-4 py-2 rounded-xl border border-white/15 backdrop-blur-md max-w-sm"
                             >
                                 <p className="text-xs font-normal leading-relaxed text-[#f4f4f2]/90">
                                     "{message}"

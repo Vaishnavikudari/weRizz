@@ -53,7 +53,7 @@ const GreetingPage = ({ onStartChat, onOpenSchedule, onStartScan, onOpenLost, on
     };
 
     return (
-        <div className="h-full w-full overflow-y-auto px-4 py-6 md:p-8 flex flex-col items-center select-none bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+        <div className="h-full w-full overflow-y-auto px-4 py-6 md:p-8 flex flex-col items-center select-none bg-transparent text-white">
             <div className="w-full max-w-4xl space-y-6">
 
                 {/* Reality Orientation Banner */}

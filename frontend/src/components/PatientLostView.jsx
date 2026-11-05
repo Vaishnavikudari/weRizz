@@ -35,19 +35,19 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
     };
 
     return (
-        <div className="h-full w-full overflow-y-auto px-4 py-6 md:p-8 flex flex-col items-center select-none bg-[#000000] text-[#f4f4f2]">
+        <div className="h-full w-full overflow-y-auto px-4 py-6 md:p-8 flex flex-col items-center select-none bg-transparent text-white">
             <div className="w-full max-w-3xl space-y-6">
 
                 {/* Back button */}
                 <div className="flex items-center justify-between">
                     <button
                         onClick={onBack}
-                        className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-white/10 transition-all cursor-pointer"
+                        className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-2 border border-[#F4EDE0]/15 transition-all cursor-pointer"
                     >
                         <ArrowLeft size={15} />
                         <span>Back to Dashboard</span>
                     </button>
-                    <span className="text-[11px] font-mono font-medium text-zinc-300 bg-zinc-950 border border-white/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <span className="text-[11px] font-mono font-medium text-zinc-300 bg-zinc-950 border border-[#F4EDE0]/15 px-3 py-1 rounded-full flex items-center gap-1.5">
                         <AlertTriangle size={13} className="text-zinc-400" />
                         Assistance Mode Active
                     </span>
@@ -57,9 +57,9 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="p-6 md:p-8 rounded-3xl bg-[#0c0c0f] border border-white/10 backdrop-blur-xl shadow-2xl text-center space-y-4"
+                    className="p-6 md:p-8 rounded-3xl bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl shadow-2xl text-center space-y-4"
                 >
-                    <div className="w-14 h-14 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-200">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-white/5 border border-[#F4EDE0]/15 flex items-center justify-center text-zinc-200">
                         <ShieldCheck size={28} />
                     </div>
 
@@ -83,9 +83,9 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
                 {/* Action Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Guide Me Home Card */}
-                    <div className="p-5 rounded-2xl bg-[#0e0e12] border border-white/10 space-y-4 flex flex-col justify-between shadow-lg">
+                    <div className="p-5 rounded-2xl bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl space-y-4 flex flex-col justify-between shadow-lg">
                         <div className="space-y-2">
-                            <div className="p-2.5 bg-white/5 text-zinc-300 rounded-xl w-fit border border-white/10">
+                            <div className="p-2.5 bg-white/5 text-zinc-300 rounded-xl w-fit border border-[#F4EDE0]/15">
                                 <Navigation size={20} />
                             </div>
                             <h3 className="text-sm font-bold text-white">Guide Me Home</h3>
@@ -95,7 +95,7 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
                         </div>
                         <button
                             onClick={handleOpenDirections}
-                            className="w-full py-3 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+                            className="w-full py-3 bg-[#FF6B5B] hover:bg-[#ff5543] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#FF6B5B]/30 transition-all active:scale-95 cursor-pointer"
                         >
                             <MapPin size={15} />
                             <span>Start Walking Navigation</span>
@@ -103,9 +103,9 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
                     </div>
 
                     {/* Emergency Family Call Card */}
-                    <div className="p-5 rounded-2xl bg-[#0e0e12] border border-white/10 space-y-4 flex flex-col justify-between shadow-lg">
+                    <div className="p-5 rounded-2xl bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl space-y-4 flex flex-col justify-between shadow-lg">
                         <div className="space-y-2">
-                            <div className="p-2.5 bg-white/5 text-zinc-300 rounded-xl w-fit border border-white/10">
+                            <div className="p-2.5 bg-white/5 text-zinc-300 rounded-xl w-fit border border-[#F4EDE0]/15">
                                 <Phone size={20} />
                             </div>
                             <h3 className="text-sm font-bold text-white">Call Family Caregiver</h3>
@@ -115,7 +115,7 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
                         </div>
                         <a
                             href="tel:+919876543210"
-                            className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-white/10 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer text-center"
+                            className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-[#F4EDE0]/15 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer text-center"
                         >
                             <Phone size={15} />
                             <span>One-Tap Call Family</span>

@@ -38,7 +38,7 @@ const LoginPage = ({ onSelectRole }) => {
             <style>{`
         .login-container {
             min-height: 100vh;
-            background: #0f172a;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -50,7 +50,7 @@ const LoginPage = ({ onSelectRole }) => {
             position: absolute;
             width: 800px;
             height: 800px;
-            background: rgba(124, 58, 237, 0.1);
+            background: rgba(255, 107, 91, 0.22);
             border-radius: 50%;
             filter: blur(100px);
             z-index: 0;
@@ -67,8 +67,8 @@ const LoginPage = ({ onSelectRole }) => {
             padding: 20px;
         }
         .role-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid #334155;
+            background: rgba(11, 23, 54, 0.75);
+            border: 1px solid rgba(244, 237, 224, 0.15);
             padding: 40px;
             border-radius: 24px;
             cursor: pointer;
@@ -77,8 +77,8 @@ const LoginPage = ({ onSelectRole }) => {
             backdrop-filter: blur(10px);
         }
         .role-card:hover { transform: translateY(-10px); }
-        .patient-card:hover { border-color: #8b5cf6; background: rgba(30, 41, 59, 0.8); }
-        .caregiver-card:hover { border-color: #10b981; background: rgba(30, 41, 59, 0.8); }
+        .patient-card:hover { border-color: #FF6B5B; background: rgba(20, 33, 61, 0.95); }
+        .caregiver-card:hover { border-color: #FF6B5B; background: rgba(20, 33, 61, 0.95); }
 
         .icon-wrapper {
             width: 100px;
@@ -90,23 +90,23 @@ const LoginPage = ({ onSelectRole }) => {
             justify-content: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .patient-icon { background: linear-gradient(135deg, #8b5cf6, #3b82f6); }
-        .caregiver-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .patient-icon { background: linear-gradient(135deg, #FF6B5B, #F4EDE0); }
+        .caregiver-icon { background: linear-gradient(135deg, #8EA89D, #FF6B5B); }
 
-        .role-title { color: white; margin: 0 0 10px; font-size: 2rem; }
-        .role-desc { color: #94a3b8; font-size: 1.1rem; line-height: 1.5; }
+        .role-title { color: #F4EDE0; margin: 0 0 10px; font-size: 2rem; }
+        .role-desc { color: rgba(244, 237, 224, 0.72); font-size: 1.1rem; line-height: 1.5; }
 
         .role-btn-wrapper { margin-top: 30px; }
         .role-btn {
             padding: 10px 25px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
+            border: 1px solid rgba(244, 237, 224, 0.3);
+            color: #F4EDE0;
             transition: 0.2s;
             display: inline-block;
         }
-        .patient-card:hover .patient-btn { background: #8b5cf6; border-color: #8b5cf6; }
-        .caregiver-card:hover .caregiver-btn { background: #10b981; border-color: #10b981; }
+        .patient-card:hover .patient-btn { background: #FF6B5B; border-color: #FF6B5B; color: #14213D; font-weight: 600; }
+        .caregiver-card:hover .caregiver-btn { background: #FF6B5B; border-color: #FF6B5B; color: #14213D; font-weight: 600; }
 
         @media (max-width: 768px) {
             .cards-wrapper { grid-template-columns: 1fr; }

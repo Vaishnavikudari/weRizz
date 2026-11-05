@@ -88,7 +88,7 @@ const CaregiverScheduleManager = () => {
     };
 
     return (
-        <div className="w-full bg-[#0c0c0f] border border-white/10 rounded-3xl p-6 shadow-2xl mt-6">
+        <div className="w-full bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-3xl p-6 shadow-2xl mt-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
                     <div className="flex items-center gap-2 text-zinc-300">
@@ -105,7 +105,7 @@ const CaregiverScheduleManager = () => {
 
                 <button
                     onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2.5 bg-white hover:bg-zinc-200 text-black font-semibold text-xs rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+                    className="px-4 py-2.5 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-[#FF6B5B]/30 transition-all active:scale-95 cursor-pointer"
                 >
                     <Plus size={15} /> 
                     <span>Add Schedule / Pill</span>
@@ -120,7 +120,7 @@ const CaregiverScheduleManager = () => {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-[#0f0f13] border border-white/10 p-6 rounded-3xl max-w-lg w-full shadow-2xl"
+                            className="bg-[#0B1736]/95 border border-white/20 p-6 rounded-3xl max-w-lg w-full shadow-2xl backdrop-blur-2xl"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-base font-bold text-white">Add Daily Schedule or Medication</h3>
@@ -202,7 +202,7 @@ const CaregiverScheduleManager = () => {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-5 py-2 bg-white hover:bg-zinc-200 text-black text-xs font-bold rounded-xl"
+                                        className="px-5 py-2 bg-[#FF6B5B] hover:bg-[#ff5543] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#FF6B5B]/30"
                                     >
                                         Save to Schedule
                                     </button>
@@ -220,8 +220,8 @@ const CaregiverScheduleManager = () => {
                         key={item.id}
                         className={`p-4 rounded-2xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all ${
                             item.completed 
-                                ? 'bg-[#0b0b0e] border-white/10 opacity-80' 
-                                : 'bg-[#0f0f13] border-white/10 hover:border-white/20'
+                                ? 'bg-[#0B1736]/40 border-white/10 opacity-80 backdrop-blur-md' 
+                                : 'bg-[#070D1E]/60 border border-white/12 backdrop-blur-md hover:border-white/25'
                         }`}
                     >
                         <div className="flex items-center gap-3.5">

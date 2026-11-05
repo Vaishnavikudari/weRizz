@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CaregiverScheduleManager from '../components/CaregiverScheduleManager';
+import CaregiverAddressManager from '../components/CaregiverAddressManager';
 import axios from 'axios';
 import { 
     UserPlus, 
@@ -22,7 +23,9 @@ import {
     Camera,
     Play,
     Pause,
-    CheckCircle2
+    CheckCircle2,
+    MapPin,
+    Home
 } from 'lucide-react';
 import AudioRecorder from '../components/AudioRecorder';
 
@@ -299,32 +302,32 @@ const CaregiverPortal = () => {
     });
 
     return (
-        <div className="w-full h-full bg-[#070709] text-slate-100 flex flex-col p-4 md:p-8 overflow-y-auto">
+        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-8 overflow-y-auto">
             {/* Top Caregiver Header */}
             <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#8d8d92] mb-2 block">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#F4EDE0]/70 mb-2 block">
                         Caretaker & family control panel
                     </span>
                     <h1 
-                        className="font-serif text-3xl sm:text-4xl text-[#f4f4f2] tracking-[-0.025em] leading-[1.08] mb-2"
+                        className="font-serif text-3xl sm:text-4xl text-[#F4EDE0] tracking-[-0.025em] leading-[1.08] mb-2"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
-                        Caregiver management <span className="italic text-[#9b8afb]">portal</span>
+                        Caregiver management <span className="italic text-[#FF6B5B]">portal</span>
                     </h1>
-                    <p className="text-[#8d8d92] text-sm leading-[1.6]">
+                    <p className="text-[#F4EDE0]/70 text-sm leading-[1.6]">
                         Manage enrolled loved ones, inspect biometric memory, and schedule medication routines.
                     </p>
                 </div>
 
                 {/* Sub-tab selection */}
-                <div className="flex bg-[#121217] border border-white/10 p-1.5 rounded-2xl gap-1">
+                <div className="flex bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl p-1.5 rounded-2xl gap-1">
                     <button
                         onClick={() => setActiveSection('enroll')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                             activeSection === 'enroll'
-                                ? 'bg-white text-black shadow-sm font-semibold'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                : 'text-[#F4EDE0]/60 hover:text-white'
                         }`}
                     >
                         <UserPlus size={15} /> Enroll New Person
@@ -333,14 +336,14 @@ const CaregiverPortal = () => {
                         onClick={() => { setActiveSection('enrolled'); fetchPeople(); }}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                             activeSection === 'enrolled'
-                                ? 'bg-white text-black shadow-sm font-semibold'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                : 'text-[#F4EDE0]/60 hover:text-white'
                         }`}
                     >
                         <Users size={15} /> 
                         <span>Enrolled Memory Bank</span>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                            activeSection === 'enrolled' ? 'bg-black/10 text-black font-semibold' : 'bg-white/10 text-slate-400'
+                            activeSection === 'enrolled' ? 'bg-black/10 text-black font-semibold' : 'bg-white/10 text-[#F4EDE0]/60'
                         }`}>
                             {people.length}
                         </span>
@@ -349,11 +352,21 @@ const CaregiverPortal = () => {
                         onClick={() => setActiveSection('schedule')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                             activeSection === 'schedule'
-                                ? 'bg-white text-black shadow-sm font-semibold'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                : 'text-[#F4EDE0]/60 hover:text-white'
                         }`}
                     >
                         <Calendar size={15} /> Routines & Schedule
+                    </button>
+                    <button
+                        onClick={() => setActiveSection('address')}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                            activeSection === 'address'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                : 'text-[#F4EDE0]/60 hover:text-white'
+                        }`}
+                    >
+                        <MapPin size={15} /> Safe Zone & Address
                     </button>
                 </div>
             </div>
@@ -382,20 +395,20 @@ const CaregiverPortal = () => {
                 {activeSection === 'enrolled' && (
                     <div className="space-y-6">
                         {/* Search & Actions Bar */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#111115] border border-white/10 p-4 rounded-2xl">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl p-4 rounded-2xl">
                             <div className="relative flex-1">
-                                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#F4EDE0]/60" />
                                 <input
                                     type="text"
                                     placeholder="Search enrolled people by name, relation, or memory notes..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-[#18181f] border border-white/5 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-violet-500/50"
+                                    className="w-full bg-[#070D1E]/60 border border-white/15 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-white/50 focus:outline-none focus:border-[#FF6B5B]/60"
                                 />
                                 {searchQuery && (
                                     <button 
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white text-xs"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#F4EDE0]/50 hover:text-white text-xs"
                                     >
                                         Clear
                                     </button>
@@ -406,7 +419,7 @@ const CaregiverPortal = () => {
                                 <button
                                     onClick={fetchPeople}
                                     disabled={loadingPeople}
-                                    className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold flex items-center gap-2 border border-white/10 transition-colors disabled:opacity-50"
+                                    className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold flex items-center gap-2 border border-[#F4EDE0]/15 transition-colors disabled:opacity-50"
                                     title="Refresh list"
                                 >
                                     <RefreshCw size={14} className={loadingPeople ? 'animate-spin' : ''} />
@@ -428,19 +441,19 @@ const CaregiverPortal = () => {
 
                         {/* List Content */}
                         {loadingPeople ? (
-                            <div className="py-20 flex flex-col items-center justify-center text-slate-500 text-xs gap-3">
+                            <div className="py-20 flex flex-col items-center justify-center text-[#F4EDE0]/50 text-xs gap-3">
                                 <RefreshCw size={24} className="animate-spin text-zinc-300" />
                                 <span>Scanning Qdrant biometric vectors & neural memories...</span>
                             </div>
                         ) : filteredPeople.length === 0 ? (
-                            <div className="bg-[#111116] border border-white/10 rounded-3xl p-10 text-center">
+                            <div className="bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-3xl p-10 text-center">
                                 <div className="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mx-auto mb-4 text-zinc-300">
                                     <UserX size={26} />
                                 </div>
                                 <h3 className="text-base font-bold text-white mb-1">
                                     {searchQuery ? 'No matching people found' : 'No One Currently Enrolled'}
                                 </h3>
-                                <p className="text-xs text-slate-400 max-w-md mx-auto mb-6">
+                                <p className="text-xs text-[#F4EDE0]/60 max-w-md mx-auto mb-6">
                                     {searchQuery
                                         ? `No enrolled records match "${searchQuery}". Try a different keyword.`
                                         : 'The neural memory bank is completely free and empty. Enroll family members, relatives, or doctors so Mavora can instantly recognize their faces and voices.'
@@ -469,7 +482,7 @@ const CaregiverPortal = () => {
                                     return (
                                         <div 
                                             key={person.id || person.name}
-                                            className="bg-[#111116] border border-white/10 hover:border-white/20 rounded-2xl p-5 flex flex-col justify-between transition-all group"
+                                            className="bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl hover:border-white/30 rounded-2xl p-5 flex flex-col justify-between transition-all group"
                                         >
                                             <div>
                                                 {/* Header row with avatar and basic info */}
@@ -478,10 +491,10 @@ const CaregiverPortal = () => {
                                                         <img 
                                                             src={imageSrc} 
                                                             alt={person.name} 
-                                                            className="w-14 h-14 rounded-2xl object-cover border border-white/10 shadow-md flex-shrink-0 bg-slate-900" 
+                                                            className="w-14 h-14 rounded-2xl object-cover border border-[#F4EDE0]/15 shadow-md flex-shrink-0 bg-slate-900" 
                                                         />
                                                     ) : (
-                                                        <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center font-bold text-violet-300 text-lg flex-shrink-0">
+                                                        <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-[#F4EDE0]/15 flex items-center justify-center font-bold text-violet-300 text-lg flex-shrink-0">
                                                             {person.name ? person.name.charAt(0).toUpperCase() : '?'}
                                                         </div>
                                                     )}
@@ -494,11 +507,11 @@ const CaregiverPortal = () => {
                                                         </div>
                                                         
                                                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                                                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-500/15 text-violet-300 border border-white/10">
+                                                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-500/15 text-violet-300 border border-[#F4EDE0]/15">
                                                                 {person.relation || 'Family Contact'}
                                                             </span>
                                                             {person.age && (
-                                                                <span className="text-[10px] text-slate-400">
+                                                                <span className="text-[10px] text-[#F4EDE0]/60">
                                                                     {person.age} yrs
                                                                 </span>
                                                             )}
@@ -539,20 +552,20 @@ const CaregiverPortal = () => {
 
                                                 {/* Memory / Notes snippet */}
                                                 {person.notes ? (
-                                                    <div className="bg-[#17171e] border border-white/5 rounded-xl p-2.5 text-[11px] text-slate-300 line-clamp-3 leading-relaxed mb-3">
-                                                        <span className="text-slate-500 font-semibold uppercase text-[9px] block mb-0.5">Whisper Context:</span>
+                                                    <div className="bg-[#17171e] border border-[#F4EDE0]/10 rounded-xl p-2.5 text-[11px] text-[#F4EDE0]/80 line-clamp-3 leading-relaxed mb-3">
+                                                        <span className="text-[#F4EDE0]/50 font-semibold uppercase text-[9px] block mb-0.5">Whisper Context:</span>
                                                         {person.notes}
                                                     </div>
                                                 ) : (
-                                                    <div className="bg-[#17171e]/50 border border-white/5 rounded-xl p-2 text-[10px] text-slate-500 italic mb-3">
+                                                    <div className="bg-[#17171e]/50 border border-[#F4EDE0]/10 rounded-xl p-2 text-[10px] text-[#F4EDE0]/50 italic mb-3">
                                                         No extra memory notes saved.
                                                     </div>
                                                 )}
                                             </div>
 
                                             {/* Bottom row actions */}
-                                            <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2 flex-wrap">
-                                                <span className="text-[9px] text-slate-500 font-mono truncate max-w-[80px]">
+                                            <div className="pt-3 border-t border-[#F4EDE0]/10 flex items-center justify-between gap-2 flex-wrap">
+                                                <span className="text-[9px] text-[#F4EDE0]/50 font-mono truncate max-w-[80px]">
                                                     ID: {person.id ? person.id.slice(0, 8) : 'biometric'}...
                                                 </span>
                                                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -570,7 +583,7 @@ const CaregiverPortal = () => {
                                                     </button>
                                                     <button
                                                         onClick={() => openEditModal(person)}
-                                                        className="px-2.5 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all border border-white/10"
+                                                        className="px-2.5 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition-all border border-[#F4EDE0]/15"
                                                         title={`Edit details for ${person.name}`}
                                                     >
                                                         <Edit2 size={12} />
@@ -596,20 +609,20 @@ const CaregiverPortal = () => {
 
                 {/* 2. ENROLL FORM VIEW */}
                 {activeSection === 'enroll' && (
-                    <div className="bg-[#111116] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl">
+                    <div className="bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-3xl p-6 md:p-8 shadow-2xl">
                         <div className="mb-6 flex items-start justify-between">
                             <div>
                                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                                     <Sparkles size={20} className="text-zinc-300" />
                                     Enroll Loved One to Patient's Memory Bank
                                 </h2>
-                                <p className="text-xs text-slate-400 mt-1">
+                                <p className="text-xs text-[#F4EDE0]/60 mt-1">
                                     Upload a face photo and relationship context so the AI can automatically recognize them and whisper reassurance.
                                 </p>
                             </div>
                             <button
                                 onClick={() => setActiveSection('enrolled')}
-                                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold border border-white/10"
+                                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold border border-[#F4EDE0]/15"
                             >
                                 Back to Memory Bank
                             </button>
@@ -637,51 +650,51 @@ const CaregiverPortal = () => {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-300">Full Name *</label>
+                                    <label className="text-xs font-semibold text-[#F4EDE0]/80">Full Name *</label>
                                     <input
                                         type="text"
                                         required
                                         placeholder="e.g. Rahul Sharma"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full mt-1 p-3 bg-[#18181f] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
+                                        className="w-full mt-1 p-3 bg-[#070D1E]/60 border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-300">Relationship to Patient *</label>
+                                    <label className="text-xs font-semibold text-[#F4EDE0]/80">Relationship to Patient *</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. Grandson / Daughter / Doctor"
                                         value={formData.relation}
                                         onChange={(e) => setFormData({ ...formData, relation: e.target.value })}
-                                        className="w-full mt-1 p-3 bg-[#18181f] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
+                                        className="w-full mt-1 p-3 bg-[#070D1E]/60 border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="text-xs font-semibold text-slate-300">Key Memories & Context Notes (What should Mavora whisper to patient?)</label>
+                                <label className="text-xs font-semibold text-[#F4EDE0]/80">Key Memories & Context Notes (What should Mavora whisper to patient?)</label>
                                 <textarea
                                     rows="3"
                                     placeholder="e.g. Loves acoustic guitar, visits on Sundays, brought jalebis last week."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full mt-1 p-3 bg-[#18181f] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
+                                    className="w-full mt-1 p-3 bg-[#070D1E]/60 border border-white/15 rounded-xl text-sm text-white focus:outline-none focus:border-violet-500"
                                 />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                                 {/* Photo Upload */}
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-300 block mb-2">Face Photo *</label>
-                                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/15 hover:border-violet-500/60 p-6 rounded-2xl cursor-pointer bg-[#18181f] transition-all">
+                                    <label className="text-xs font-semibold text-[#F4EDE0]/80 block mb-2">Face Photo *</label>
+                                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/20 hover:border-[#FF6B5B]/60 p-6 rounded-2xl cursor-pointer bg-[#070D1E]/60 transition-all">
                                         {filePreview ? (
                                             <img src={filePreview} alt="Preview" className="max-h-40 rounded-xl object-contain shadow" />
                                         ) : (
-                                            <div className="text-center text-slate-400">
+                                            <div className="text-center text-[#F4EDE0]/60">
                                                 <UploadCloud size={32} className="mx-auto mb-2 text-zinc-300" />
                                                 <span className="text-xs font-bold text-slate-200">Click to Upload Photo</span>
-                                                <p className="text-[10px] text-slate-500 mt-1">JPEG, PNG with clear front face</p>
+                                                <p className="text-[10px] text-[#F4EDE0]/50 mt-1">JPEG, PNG with clear front face</p>
                                             </div>
                                         )}
                                         <input
@@ -701,10 +714,10 @@ const CaregiverPortal = () => {
 
                                 {/* Voice Sample (Optional) */}
                                 <div>
-                                    <label className="text-xs font-semibold text-slate-300 block mb-2">Voice Recording (Optional)</label>
-                                    <div className="p-4 bg-[#18181f] border border-white/10 rounded-2xl h-[140px] flex flex-col items-center justify-center">
+                                    <label className="text-xs font-semibold text-[#F4EDE0]/80 block mb-2">Voice Recording (Optional)</label>
+                                    <div className="p-4 bg-[#070D1E]/60 border border-white/15 rounded-2xl h-[140px] flex flex-col items-center justify-center">
                                         <AudioRecorder onRecordingComplete={(blob) => setAudioBlob(blob)} />
-                                        <p className="text-[10px] text-slate-500 mt-2 text-center">Record a reassuring greeting like "Hello Dad, it's Rahul!"</p>
+                                        <p className="text-[10px] text-[#F4EDE0]/50 mt-2 text-center">Record a reassuring greeting like "Hello Dad, it's Rahul!"</p>
                                     </div>
                                 </div>
                             </div>
@@ -713,14 +726,14 @@ const CaregiverPortal = () => {
                                 <button
                                     type="button"
                                     onClick={() => setActiveSection('enrolled')}
-                                    className="px-5 py-3 bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs rounded-xl"
+                                    className="px-5 py-3 bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 font-bold text-xs rounded-xl"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={status === 'submitting'}
-                                    className="px-8 py-3 bg-white hover:bg-zinc-200 text-black font-bold text-xs rounded-xl shadow-sm transition-all disabled:opacity-50"
+                                    className="px-8 py-3 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#FF6B5B]/30 transition-all disabled:opacity-50"
                                 >
                                     {status === 'submitting' ? 'Generating Face Vectors...' : 'Save Person to Memory'}
                                 </button>
@@ -732,6 +745,11 @@ const CaregiverPortal = () => {
                 {/* 3. SCHEDULE & ROUTINE VIEW */}
                 {activeSection === 'schedule' && (
                     <CaregiverScheduleManager />
+                )}
+
+                {/* 4. SAFE ZONE & HOME ADDRESS VIEW */}
+                {activeSection === 'address' && (
+                    <CaregiverAddressManager />
                 )}
             </div>
 
@@ -745,14 +763,14 @@ const CaregiverPortal = () => {
                         <h3 className="text-lg font-bold text-white mb-2">
                             Remove {deleteModalPerson.name} from Memory?
                         </h3>
-                        <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                        <p className="text-xs text-[#F4EDE0]/60 leading-relaxed mb-6">
                             This will permanently delete <span className="text-white font-semibold">{deleteModalPerson.name}</span>'s 512-dimension face vectors, voice sample, and semantic memory facts from Qdrant. The AI assistant will no longer recognize them.
                         </p>
                         <div className="flex items-center justify-end gap-3">
                             <button
                                 onClick={() => setDeleteModalPerson(null)}
                                 disabled={Boolean(deletingId)}
-                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition-colors"
+                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold transition-colors"
                             >
                                 Cancel
                             </button>
@@ -788,14 +806,14 @@ const CaregiverPortal = () => {
                         <h3 className="text-lg font-bold text-white mb-2">
                             Clear Entire Memory Bank?
                         </h3>
-                        <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                        <p className="text-xs text-[#F4EDE0]/60 leading-relaxed mb-6">
                             Are you sure you want to remove <span className="text-rose-400 font-semibold">all {people.length} enrolled individuals</span>? All face vector collections, voice records, and context facts will be completely freed.
                         </p>
                         <div className="flex items-center justify-end gap-3">
                             <button
                                 onClick={() => setShowClearAllModal(false)}
                                 disabled={clearingAll}
-                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition-colors"
+                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold transition-colors"
                             >
                                 Cancel
                             </button>
@@ -823,24 +841,24 @@ const CaregiverPortal = () => {
             {/* EDIT PERSON MODAL */}
             {editModalPerson && (
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-[#14141a] border border-white/10 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
-                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                    <div className="bg-[#14141a] border border-[#F4EDE0]/15 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
+                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F4EDE0]/15">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center text-zinc-300">
+                                <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-[#F4EDE0]/15 flex items-center justify-center text-zinc-300">
                                     <Edit2 size={20} />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-white">
                                         Edit Memory: {editModalPerson.name}
                                     </h3>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-xs text-[#F4EDE0]/60">
                                         Update details, whisper context, face biometric photo, or voice recording.
                                     </p>
                                 </div>
                             </div>
                             <button
                                 onClick={() => setEditModalPerson(null)}
-                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-[#F4EDE0]/60 hover:text-white flex items-center justify-center transition-colors"
                             >
                                 <X size={18} />
                             </button>
@@ -856,7 +874,7 @@ const CaregiverPortal = () => {
                         <form onSubmit={handleUpdatePerson} className="space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                                    <label className="block text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider mb-1.5">
                                         Full Name *
                                     </label>
                                     <input
@@ -864,11 +882,11 @@ const CaregiverPortal = () => {
                                         value={editFormData.name}
                                         onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
                                         required
-                                        className="w-full bg-[#1b1b24] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500"
+                                        className="w-full bg-[#1b1b24] border border-[#F4EDE0]/15 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                                    <label className="block text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider mb-1.5">
                                         Relation to Patient *
                                     </label>
                                     <input
@@ -877,7 +895,7 @@ const CaregiverPortal = () => {
                                         onChange={(e) => setEditFormData({ ...editFormData, relation: e.target.value })}
                                         required
                                         placeholder="e.g. Daughter, Son, Spouse"
-                                        className="w-full bg-[#1b1b24] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500"
+                                        className="w-full bg-[#1b1b24] border border-[#F4EDE0]/15 rounded-xl px-3.5 py-2.5 text-white text-sm focus:outline-none focus:border-violet-500"
                                     />
                                 </div>
                             </div>
@@ -892,7 +910,7 @@ const CaregiverPortal = () => {
                                         className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all border ${
                                             editFormData.relation === rel 
                                                 ? 'bg-violet-600 text-white border-violet-500' 
-                                                : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'
+                                                : 'bg-white/5 text-[#F4EDE0]/60 border-[#F4EDE0]/10 hover:bg-white/10 hover:text-white'
                                         }`}
                                     >
                                         {rel}
@@ -901,7 +919,7 @@ const CaregiverPortal = () => {
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                                <label className="block text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider mb-1.5">
                                     Whisper Context / Memory Notes
                                 </label>
                                 <textarea
@@ -909,16 +927,16 @@ const CaregiverPortal = () => {
                                     value={editFormData.notes}
                                     onChange={(e) => setEditFormData({ ...editFormData, notes: e.target.value })}
                                     placeholder="e.g. She visits every weekend. Loves gardening. Bring her favorite ginger tea."
-                                    className="w-full bg-[#1b1b24] border border-white/10 rounded-xl p-3 text-white text-xs leading-relaxed focus:outline-none focus:border-violet-500"
+                                    className="w-full bg-[#1b1b24] border border-[#F4EDE0]/15 rounded-xl p-3 text-white text-xs leading-relaxed focus:outline-none focus:border-violet-500"
                                 />
-                                <span className="text-[10px] text-slate-500 mt-1 block">
+                                <span className="text-[10px] text-[#F4EDE0]/50 mt-1 block">
                                     The AI assistant reads or whispers these context notes when comforting the patient.
                                 </span>
                             </div>
 
                             {/* Photo Replacement */}
-                            <div className="p-3.5 bg-[#171720] border border-white/5 rounded-2xl">
-                                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                            <div className="p-3.5 bg-[#171720] border border-[#F4EDE0]/10 rounded-2xl">
+                                <label className="block text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider mb-2">
                                     Update Face Photo (Biometric Embedding)
                                 </label>
                                 <div className="flex items-center gap-4">
@@ -926,10 +944,10 @@ const CaregiverPortal = () => {
                                         <img 
                                             src={editFilePreview} 
                                             alt="Preview" 
-                                            className="w-16 h-16 rounded-xl object-cover border border-white/10 bg-slate-900 flex-shrink-0"
+                                            className="w-16 h-16 rounded-xl object-cover border border-[#F4EDE0]/15 bg-slate-900 flex-shrink-0"
                                         />
                                     ) : (
-                                        <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center text-violet-300 font-bold flex-shrink-0">
+                                        <div className="w-16 h-16 rounded-xl bg-zinc-900 border border-[#F4EDE0]/15 flex items-center justify-center text-violet-300 font-bold flex-shrink-0">
                                             ?
                                         </div>
                                     )}
@@ -944,9 +962,9 @@ const CaregiverPortal = () => {
                                                     setEditFilePreview(URL.createObjectURL(f));
                                                 }
                                             }}
-                                            className="text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-violet-600/30 file:text-violet-300 hover:file:bg-violet-600/50"
+                                            className="text-xs text-[#F4EDE0]/60 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-violet-600/30 file:text-violet-300 hover:file:bg-violet-600/50"
                                         />
-                                        <p className="text-[10px] text-slate-500 mt-1">
+                                        <p className="text-[10px] text-[#F4EDE0]/50 mt-1">
                                             Leave empty to keep existing photo and 512-dim facial vectors.
                                         </p>
                                     </div>
@@ -954,9 +972,9 @@ const CaregiverPortal = () => {
                             </div>
 
                             {/* Voice Recording Section */}
-                            <div className="p-3.5 bg-[#171720] border border-white/5 rounded-2xl">
+                            <div className="p-3.5 bg-[#171720] border border-[#F4EDE0]/10 rounded-2xl">
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                    <label className="text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider flex items-center gap-1.5">
                                         <Mic size={14} className="text-zinc-300" />
                                         Voice Profile & Reassurance Message
                                     </label>
@@ -969,7 +987,7 @@ const CaregiverPortal = () => {
 
                                 {editModalPerson.audio_base64 && !editAudioBlob && (
                                     <div className="mb-3 p-2 bg-[#1b1b26] rounded-xl flex items-center justify-between">
-                                        <span className="text-[11px] text-slate-400 font-medium">Listen to existing voice sample:</span>
+                                        <span className="text-[11px] text-[#F4EDE0]/60 font-medium">Listen to existing voice sample:</span>
                                         <button
                                             type="button"
                                             onClick={() => playVoiceSample(editModalPerson)}
@@ -988,7 +1006,7 @@ const CaregiverPortal = () => {
                                     </div>
                                 )}
 
-                                <p className="text-[11px] text-slate-400 mb-2">
+                                <p className="text-[11px] text-[#F4EDE0]/60 mb-2">
                                     Record a new audio clip to replace or set their voice recording:
                                 </p>
                                 <AudioRecorder onRecordingComplete={(blob) => setEditAudioBlob(blob)} />
@@ -1000,12 +1018,12 @@ const CaregiverPortal = () => {
                                 )}
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#F4EDE0]/15">
                                 <button
                                     type="button"
                                     onClick={() => setEditModalPerson(null)}
                                     disabled={updating}
-                                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition-colors"
+                                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold transition-colors"
                                 >
                                     Cancel
                                 </button>
@@ -1036,7 +1054,7 @@ const CaregiverPortal = () => {
             {recordModalPerson && (
                 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#14141a] border border-emerald-500/40 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between mb-5 pb-3 border-b border-white/10">
+                        <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#F4EDE0]/15">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
                                     <Mic size={20} />
@@ -1045,7 +1063,7 @@ const CaregiverPortal = () => {
                                     <h3 className="text-base font-bold text-white">
                                         Voice Memory: {recordModalPerson.name}
                                     </h3>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-xs text-[#F4EDE0]/60">
                                         {recordModalPerson.relation || 'Loved One'}
                                     </p>
                                 </div>
@@ -1055,20 +1073,20 @@ const CaregiverPortal = () => {
                                     setRecordModalPerson(null);
                                     setRecordAudioBlob(null);
                                 }}
-                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+                                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-[#F4EDE0]/60 hover:text-white flex items-center justify-center transition-colors"
                             >
                                 <X size={18} />
                             </button>
                         </div>
 
-                        <div className="mb-4 bg-emerald-950/30 border border-emerald-500/20 rounded-2xl p-3.5 text-xs text-slate-300 leading-relaxed">
+                        <div className="mb-4 bg-emerald-950/30 border border-emerald-500/20 rounded-2xl p-3.5 text-xs text-[#F4EDE0]/80 leading-relaxed">
                             <p className="font-semibold text-emerald-400 mb-1">Why record their voice?</p>
                             Record a warm greeting (e.g. <em>"Hello Dad, it's {recordModalPerson.name}. You are safe at home."</em>). <span className="font-handwritten text-xl text-zinc-200 block mt-1">“When the patient feels confused or anxious, Mavora whispers this familiar voice to comfort them.”</span>
                         </div>
 
                         {recordModalPerson.audio_base64 && !recordAudioBlob && (
-                            <div className="mb-4 p-3 bg-[#1b1b26] rounded-2xl border border-white/5 flex items-center justify-between">
-                                <span className="text-xs text-slate-300 font-medium">Existing recording:</span>
+                            <div className="mb-4 p-3 bg-[#1b1b26] rounded-2xl border border-[#F4EDE0]/10 flex items-center justify-between">
+                                <span className="text-xs text-[#F4EDE0]/80 font-medium">Existing recording:</span>
                                 <button
                                     type="button"
                                     onClick={() => playVoiceSample(recordModalPerson)}
@@ -1087,8 +1105,8 @@ const CaregiverPortal = () => {
                             </div>
                         )}
 
-                        <div className="p-4 bg-[#171720] border border-white/10 rounded-2xl mb-5">
-                            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                        <div className="p-4 bg-[#171720] border border-[#F4EDE0]/15 rounded-2xl mb-5">
+                            <label className="block text-xs font-bold text-[#F4EDE0]/80 uppercase tracking-wider mb-2">
                                 Record New Audio Clip:
                             </label>
                             <AudioRecorder onRecordingComplete={(blob) => setRecordAudioBlob(blob)} />
@@ -1108,7 +1126,7 @@ const CaregiverPortal = () => {
                                     setRecordAudioBlob(null);
                                 }}
                                 disabled={savingAudio}
-                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold transition-colors"
+                                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#F4EDE0]/80 text-xs font-semibold transition-colors"
                             >
                                 Cancel
                             </button>

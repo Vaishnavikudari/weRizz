@@ -22,6 +22,7 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 // Pages
 
 import LandingPage from './pages/LandingPage';
+import WeRizzIntro from './components/WeRizzIntro';
 
 import LoginPage from './pages/LoginPage';
 
@@ -52,6 +53,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || "/api/v1";
 function App() {
 
   const [view, setView] = useState('landing');
+  const [showIntro, setShowIntro] = useState(true);
 
   const currentAudioRef = useRef(null);
 
@@ -963,7 +965,7 @@ function App() {
 
         <style>{`
 
-        :root { --bg: #000000; --surface: #0a0a0c; --primary: #ffffff; --text: #f4f4f2; }
+        :root { --bg: #070D1E; --surface: #0B1736; --primary: #FFFFFF; --text: #FFFFFF; }
 
         .app-container {
 
@@ -973,7 +975,7 @@ function App() {
 
             width: 100%;
 
-            background: #000000;
+            background: transparent;
 
             color: var(--text);
 
@@ -1076,22 +1078,23 @@ function App() {
   return (
 
     <ThemeProvider>
+      {showIntro && <WeRizzIntro onComplete={() => setShowIntro(false)} />}
 
-      <div className="fixed inset-0 w-screen h-screen flex flex-col bg-[#000000] text-[#f4f4f2] transition-colors duration-300 overflow-hidden">
+      <div className="fixed inset-0 w-screen h-screen flex flex-col bg-[#070D1E] text-white transition-colors duration-300 overflow-hidden">
 
         
 
-        {/* Animated Pure CSS Background Orbs Mesh */}
-
-        <div className="mesh-bg-container" aria-hidden="true">
-
-          <div className="mesh-orb mesh-orb-1" />
-
-          <div className="mesh-orb mesh-orb-2" />
-
-          <div className="mesh-orb mesh-orb-3" />
-
+        {/* Dark Royal Blue with Flowing Ethereal White Clouds */}
+        <div className="royal-cloud-background" aria-hidden="true">
+        <div className="continuous-cloud-stream">
+          <div className="continuous-cloud cloud-loop-1" />
+          <div className="continuous-cloud cloud-loop-2" />
+          <div className="continuous-cloud cloud-loop-3" />
+          <div className="continuous-cloud-lower cloud-loop-4" />
+          <div className="continuous-cloud-lower cloud-loop-5" />
         </div>
+      </div>
+        <div className="ribbed-glass-overlay" aria-hidden="true" />
 
 
 

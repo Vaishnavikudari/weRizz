@@ -76,32 +76,32 @@ const PatientScheduleView = () => {
     });
 
     return (
-        <div className="w-full h-full bg-[#0b0b0c] text-[#f4f4f2] flex flex-col p-4 md:p-8 overflow-y-auto">
+        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-8 overflow-y-auto">
             {/* Reality Orientation Banner - The Seasons & Instrument Serif Typography */}
             <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="max-w-4xl w-full mx-auto mb-8 bg-[#121214] border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                className="max-w-4xl w-full mx-auto mb-8 bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
             >
                 <div className="relative z-10">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#8d8d92] mb-3 flex items-center gap-1.5">
-                        <Calendar size={13} className="text-[#8d8d92]" /> Memory care companion • Reality orientation
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#F4EDE0]/70 mb-3 flex items-center gap-1.5">
+                        <Calendar size={13} className="text-[#F4EDE0]/70" /> Memory care companion • Reality orientation
                     </span>
                     <h1 
-                        className="font-serif text-3xl sm:text-4xl md:text-[44px] text-[#f4f4f2] tracking-[-0.025em] leading-[1.08] mb-3"
+                        className="font-serif text-3xl sm:text-4xl md:text-[44px] text-[#F4EDE0] tracking-[-0.025em] leading-[1.08] mb-3"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
-                        Today is <span className="italic text-[#9b8afb]">{todayStr}</span>
+                        Today is <span className="italic text-[#FF6B5B]">{todayStr}</span>
                     </h1>
-                    <p className="text-[#8d8d92] text-sm sm:text-base leading-[1.6] max-w-xl">
+                    <p className="text-[#F4EDE0]/70 text-sm sm:text-base leading-[1.6] max-w-xl">
                         Mavora is keeping track of your daily routine. You are safe at home with your loved ones.
                     </p>
                 </div>
 
-                <div className="bg-[#0b0b0c] border border-white/10 px-6 py-4 rounded-xl text-center shadow-md flex-shrink-0 relative z-10">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-[#8d8d92]">Current Time</p>
-                    <p className="text-2xl sm:text-3xl font-mono font-medium text-[#f4f4f2] mt-0.5 tracking-tight">
+                <div className="bg-[#070D1E]/60 border border-white/15 backdrop-blur-md px-6 py-4 rounded-xl text-center shadow-md flex-shrink-0 relative z-10">
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-[#F4EDE0]/70">Current Time</p>
+                    <p className="text-2xl sm:text-3xl font-mono font-medium text-[#F4EDE0] mt-0.5 tracking-tight">
                         {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                 </div>
@@ -115,27 +115,27 @@ const PatientScheduleView = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.98 }}
                         transition={{ duration: 0.2 }}
-                        className="max-w-4xl w-full mx-auto mb-6 bg-[#16161a] border border-[#9b8afb]/30 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xl"
+                        className="max-w-4xl w-full mx-auto mb-6 bg-[#16161a] border border-[#FF6B5B]/40 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xl"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 bg-[#9b8afb]/10 rounded-xl text-[#9b8afb]">
+                            <div className="p-2.5 bg-[#9b8afb]/10 rounded-xl text-[#FF6B5B]">
                                 <Volume2 size={20} />
                             </div>
                             <div>
-                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#9b8afb]">
+                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#FF6B5B]">
                                     Already Recorded
                                 </p>
                                 <p 
-                                    className="font-serif text-lg text-[#f4f4f2] mt-0.5"
+                                    className="font-serif text-lg text-[#F4EDE0] mt-0.5"
                                     style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                 >
-                                    <span className="italic text-[#9b8afb]">“{reassuranceMessage}”</span>
+                                    <span className="italic text-[#FF6B5B]">“{reassuranceMessage}”</span>
                                 </p>
                             </div>
                         </div>
                         <button
                             onClick={() => setReassuranceMessage(null)}
-                            className="text-[#8d8d92] hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                            className="text-[#F4EDE0]/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                         >
                             <X size={18} />
                         </button>
@@ -159,11 +159,11 @@ const PatientScheduleView = () => {
                             onClick={() => setActiveFilter(tab.id)}
                             className={`px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
                                 isActive 
-                                    ? 'bg-[#f4f4f2] text-[#0b0b0c] shadow-sm font-semibold' 
-                                    : 'bg-[#121214] border border-white/10 text-[#8d8d92] hover:text-[#f4f4f2] hover:border-white/20'
+                                    ? 'bg-[#FF6B5B] text-white font-bold shadow-lg shadow-[#FF6B5B]/30' 
+                                    : 'bg-[#0B1736]/60 border border-white/15 text-white/80 hover:text-white backdrop-blur-md'
                             }`}
                         >
-                            <Icon size={13} className={isActive ? 'text-[#0b0b0c]' : 'text-[#8d8d92]'} />
+                            <Icon size={13} className={isActive ? 'text-white' : 'text-white/80'} />
                             <span>{tab.label}</span>
                         </button>
                     );
@@ -180,33 +180,33 @@ const PatientScheduleView = () => {
                         transition={{ duration: 0.2, delay: index * 0.04 }}
                         className={`p-5 rounded-2xl border transition-all ${
                             item.completed 
-                                ? 'bg-[#0f0f11] border-white/5 opacity-80' 
-                                : 'bg-[#121214] border-white/10 hover:border-white/20 shadow-md'
+                                ? 'bg-[#0B1736]/40 border-white/10 opacity-80 backdrop-blur-md' 
+                                : 'bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl hover:border-white/30 shadow-lg'
                         }`}
                     >
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div className="flex items-start gap-3.5">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-[#f4f4f2] flex-shrink-0 mt-0.5">
+                                <div className="p-3 rounded-xl bg-white/5 border border-[#F4EDE0]/15 text-[#F4EDE0] flex-shrink-0 mt-0.5">
                                     {item.category === 'medicine' ? <Pill size={20} /> : <Clock size={20} />}
                                 </div>
 
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[#0b0b0c] border border-white/10 text-[#8d8d92]">
+                                        <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-[#070D1E]/60 border border-white/15 text-white/80">
                                             {item.time}
                                         </span>
-                                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#8d8d92]">
+                                        <span className="font-mono text-[10px] uppercase tracking-wider text-[#F4EDE0]/70">
                                             {item.slot} • {item.category}
                                         </span>
                                     </div>
                                     <h2 
-                                        className="font-serif text-xl font-normal text-[#f4f4f2] mt-1"
+                                        className="font-serif text-xl font-normal text-[#F4EDE0] mt-1"
                                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                     >
                                         {item.title}
                                     </h2>
                                     <p 
-                                        className="font-serif text-base text-[#9b8afb] mt-0.5 italic"
+                                        className="font-serif text-base text-[#FF6B5B] mt-0.5 italic"
                                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                     >
                                         “{item.notes}”
@@ -219,7 +219,7 @@ const PatientScheduleView = () => {
                                 {item.completed ? (
                                     <button
                                         onClick={() => handleAlreadyTakenClick(item)}
-                                        className="w-full md:w-auto px-4 py-2 bg-[#0b0b0c] hover:bg-[#141416] border border-[#9b8afb]/30 rounded-xl flex items-center justify-center gap-2 text-[#9b8afb] font-medium text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
+                                        className="w-full md:w-auto px-4 py-2 bg-[#FF6B5B]/15 hover:bg-[#FF6B5B]/25 border border-[#FF6B5B]/40 rounded-xl flex items-center justify-center gap-2 text-[#FF6B5B] font-medium text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
                                     >
                                         <CheckCircle2 size={15} />
                                         <span>Taken at {item.takenAt || 'Earlier'}</span>
@@ -227,13 +227,13 @@ const PatientScheduleView = () => {
                                 ) : item.category === 'medicine' ? (
                                     <button
                                         onClick={() => handleMarkTaken(item)}
-                                        className="w-full md:w-auto px-5 py-2.5 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] font-medium text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                                        className="w-full md:w-auto px-5 py-2.5 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#FF6B5B]/30 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
                                     >
                                         <CheckCircle2 size={15} />
                                         <span>Mark as Taken</span>
                                     </button>
                                 ) : (
-                                    <span className="font-mono text-[10px] text-[#8d8d92] px-3 py-1.5 bg-[#0b0b0c] border border-white/5 rounded-lg">
+                                    <span className="font-mono text-[10px] text-[#F4EDE0]/70 px-3 py-1.5 bg-[#070D1E]/60 border border-white/12 rounded-lg text-white/80">
                                         Scheduled Routine
                                     </span>
                                 )}

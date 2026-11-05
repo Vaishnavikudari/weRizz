@@ -146,8 +146,8 @@ function EnrollmentForm({ type = 'person', onCancel, onSave, onSuccess }) {
     };
 
     return (
-        <div className="w-full h-full bg-[#0d0d12] text-slate-100 flex flex-col p-4 md:p-6 overflow-y-auto">
-            <div className="max-w-xl w-full mx-auto bg-[#131319] border border-white/10 rounded-3xl p-5 md:p-7 shadow-2xl space-y-5">
+        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-6 overflow-y-auto">
+            <div className="max-w-xl w-full mx-auto bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-3xl p-5 md:p-7 shadow-2xl space-y-5">
                 {/* Header */}
                 <div className="flex items-start justify-between border-b border-white/5 pb-4">
                     <div>

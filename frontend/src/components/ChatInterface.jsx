@@ -151,9 +151,9 @@ function ChatInterface({
     };
 
     return (
-        <div className="flex flex-col h-full w-full bg-[#000000] border-l border-white/10 relative">
+        <div className="flex flex-col h-full w-full bg-transparent border-l border-white/10 relative">
             {/* Header with The Seasons & Instrument Serif Typography */}
-            <div className="p-3.5 px-6 border-b border-white/10 flex items-center justify-between bg-[#121214] sticky top-0 z-10 flex-shrink-0">
+            <div className="p-3.5 px-6 border-b border-white/10 flex items-center justify-between bg-[#0B1736]/75 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 flex-shrink-0">
                 <div className="flex items-center gap-3">
                     <Sparkles className="text-[#9b8afb]" size={16} />
                     <div className="flex flex-col">
@@ -170,12 +170,12 @@ function ChatInterface({
                 </div>
 
                 {/* Minimalist 3 Languages Segmented Switcher */}
-                <div className="flex items-center gap-1 bg-[#0b0b0c] border border-white/10 p-1 rounded-xl">
+                <div className="flex items-center gap-1 bg-[#070D1E]/60 border border-white/12 backdrop-blur-md p-1 rounded-xl">
                     <button
                         onClick={() => onLanguageChange && onLanguageChange('en')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'en'
-                                ? 'bg-[#f4f4f2] text-[#0b0b0c] shadow-sm font-semibold'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="English"
@@ -186,7 +186,7 @@ function ChatInterface({
                         onClick={() => onLanguageChange && onLanguageChange('kn')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'kn'
-                                ? 'bg-[#f4f4f2] text-[#0b0b0c] shadow-sm font-semibold'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="ಕನ್ನಡ (Kannada)"
@@ -197,7 +197,7 @@ function ChatInterface({
                         onClick={() => onLanguageChange && onLanguageChange('hi')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'hi'
-                                ? 'bg-[#f4f4f2] text-[#0b0b0c] shadow-sm font-semibold'
+                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="हिन्दी (Hindi)"
@@ -249,8 +249,8 @@ function ChatInterface({
 
                                 {/* Content Bubble */}
                                 <div className={`flex flex-col space-y-2 p-4 shadow-md border ${msg.role === 'user'
-                                    ? 'bg-zinc-800 text-white rounded-2xl rounded-tr-none border-white/10'
-                                    : 'bg-[#0f0f13] text-zinc-100 rounded-2xl rounded-tl-none border-white/10'
+                                    ? 'bg-[#102554]/85 text-white rounded-2xl rounded-tr-none border border-white/15 backdrop-blur-md'
+                                    : 'bg-[#0B1736]/80 text-zinc-100 rounded-2xl rounded-tl-none border border-white/12 backdrop-blur-md'
                                     }`}>
                                     
                                     <div className="flex items-start justify-between gap-3">
@@ -334,7 +334,7 @@ function ChatInterface({
             </div>
 
             {/* Input Footer - Minimal Black */}
-            <div className="p-3 md:px-5 md:py-3.5 bg-[#08080a] border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
+            <div className="p-3 md:px-5 md:py-3.5 bg-[#0B1736]/75 backdrop-blur-xl border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
                 {/* 1. Suggestions Row */}
                 {suggestions.length > 0 && !showCamera && (
                     <div className="flex gap-2 overflow-x-auto pb-1 noscroll scroll-smooth">
@@ -342,7 +342,7 @@ function ChatInterface({
                             <button
                                 key={i}
                                 onClick={() => onSuggestionClick(s)}
-                                className="whitespace-nowrap px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 hover:border-white/20 text-zinc-300 hover:text-white text-xs font-medium rounded-full border border-white/10 transition-all flex-shrink-0 cursor-pointer shadow-sm active:scale-95"
+                                className="whitespace-nowrap px-3.5 py-1.5 bg-[#0B1736]/60 hover:bg-[#102554]/80 text-white/90 border border-white/15 backdrop-blur-md text-xs font-medium rounded-full border border-white/10 transition-all flex-shrink-0 cursor-pointer shadow-sm active:scale-95"
                             >
                                 {s}
                             </button>
@@ -351,7 +351,7 @@ function ChatInterface({
                 )}
 
                 {/* 2. Text & Voice Input Bar */}
-                <div className="flex items-center gap-2 bg-[#101013] rounded-2xl p-1.5 px-3 border border-white/10 focus-within:border-white/30 transition-all shadow-md">
+                <div className="flex items-center gap-2 bg-[#070D1E]/60 rounded-2xl p-1.5 px-3 border border-white/15 focus-within:border-[#FF6B5B]/60 backdrop-blur-md transition-all shadow-md">
                     <input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -378,7 +378,7 @@ function ChatInterface({
                     <button
                         onClick={handleSend}
                         disabled={!input.trim()}
-                        className="p-2 bg-white hover:bg-zinc-200 text-black rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer"
+                        className="p-2 bg-[#FF6B5B] hover:bg-[#ff5543] text-white rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer shadow-md shadow-[#FF6B5B]/30"
                     >
                         <Send size={16} />
                     </button>
@@ -386,7 +386,7 @@ function ChatInterface({
 
                 {/* 3. Action Toolbar */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                    <div className="flex items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-white/10 shadow-sm">
+                    <div className="flex items-center gap-1 bg-[#070D1E]/60 backdrop-blur-md p-1 rounded-xl border border-white/12 shadow-sm">
                         <ActionButton icon={<User size={14} />} label="Scan Face" onClick={() => openCamera('person')} />
                         <ActionButton icon={<Package size={14} />} label="Scan Item" onClick={() => openCamera('object')} />
                         <div className="w-px h-4 bg-white/10 mx-0.5" />

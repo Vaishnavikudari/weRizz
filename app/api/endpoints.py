@@ -620,3 +620,64 @@ async def update_enrolled_person(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# -------------------------------------------------------------
+# SAFE ZONE & PATIENT HOME ADDRESS ENDPOINTS
+# -------------------------------------------------------------
+import json
+import time
+
+SAFE_ZONE_FILE = Path("data/safe_zone.json")
+
+class SafeZoneModel(BaseModel):
+    address: str
+    landmark: Optional[str] = ""
+    lat: float = 12.9716
+    lng: float = 77.5946
+    radius_meters: int = 500
+    emergency_contact: Optional[str] = ""
+    emergency_phone: Optional[str] = ""
+    updated_at: Optional[str] = None
+
+@router.get("/patient/safe_zone")
+async def get_patient_safe_zone():
+    try:
+        if SAFE_ZONE_FILE.exists():
+            with open(SAFE_ZONE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {
+            "address": "Home: 4th Cross, Green Park, Bangalore",
+            "landmark": "Opposite Apollo Pharmacy",
+            "lat": 12.9716,
+            "lng": 77.5946,
+            "radius_meters": 500,
+            "emergency_contact": "Rahul",
+            "emergency_phone": "+91 98765 43210",
+            "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+    except Exception as e:
+        return {
+            "address": "Home: 4th Cross, Green Park, Bangalore",
+            "landmark": "",
+            "lat": 12.9716,
+            "lng": 77.5946,
+            "radius_meters": 500
+        }
+
+@router.post("/patient/safe_zone")
+async def update_patient_safe_zone(zone: SafeZoneModel):
+    try:
+        SAFE_ZONE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        data = zone.dict()
+        data["updated_at"] = time.strftime("%Y-%m-%d %I:%M %p")
+        with open(SAFE_ZONE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        print(f"[SAFE ZONE] Updated home address: {data.get('address')} ({data.get('lat')}, {data.get('lng')})")
+        return {
+            "status": "success",
+            "message": "Safe Zone Home Address saved successfully",
+            "safe_zone": data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
