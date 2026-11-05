@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
-# Exit on error
+# Exit immediately if a command exits with a non-zero status
 set -o errexit
 
-echo "🚀 Starting Build Process..."
+echo "🚀 [1/3] Upgrading pip and installing Python dependencies..."
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 
-# 1. Install Backend Dependencies
-echo "📦 Installing Python Dependencies..."
-pip install -r requirements.txt
-pip install gunicorn uvicorn
-
-# 2. Build Frontend
-echo "⚛️ Building React Frontend..."
+echo "⚛️ [2/3] Installing frontend dependencies and building production assets..."
 cd frontend
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 
-echo "✅ Build Complete!"
+echo "✅ [3/3] Build completed successfully!"
