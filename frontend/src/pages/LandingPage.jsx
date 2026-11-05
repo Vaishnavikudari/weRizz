@@ -1,4 +1,5 @@
 import React from 'react';
+import GlowingBrainVideo from '../components/GlowingBrainVideo';
 import { 
     MessageCircle, Pill, CalendarPlus, ScanLine, 
     Users, MapPin, Navigation, BellRing, ArrowRight 
@@ -78,17 +79,9 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
             >
                 <div className="flex flex-col items-center text-center">
                     
-                    {/* Glowing Brain in the Center Top */}
-                    <div className="relative mb-8 sm:mb-10 flex items-center justify-center group">
-                        {/* Soft subtle ambient neural aura behind the brain */}
-                        <div className="absolute w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[radial-gradient(circle,rgba(155,138,251,0.22)_0%,rgba(155,138,251,0.06)_42%,transparent_72%)] blur-2xl pointer-events-none" />
-                        
-                        <img 
-                            src="/assets/glowing_brain.png" 
-                            alt="Mavora Glowing Neural Brain"
-                            className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 object-contain drop-shadow-[0_0_40px_rgba(155,138,251,0.35)] transition-transform duration-700 ease-out hover:scale-105 select-none pointer-events-none animate-pulse"
-                            style={{ animationDuration: '4.5s' }}
-                        />
+                    {/* Glowing 3D Rotating Brain Video (Background Removed) */}
+                    <div className="relative mb-8 sm:mb-10 flex items-center justify-center">
+                        <GlowingBrainVideo />
                     </div>
 
                     {/* Editorial Eyebrow */}
