@@ -1,5 +1,5 @@
 import React from 'react';
-import GlowingBrainVideo from '../components/GlowingBrainVideo';
+import NeuralNetworkHero from '../components/NeuralNetworkHero';
 import { 
     MessageCircle, Pill, CalendarPlus, ScanLine, 
     Users, MapPin, Navigation, BellRing, ArrowRight 
@@ -70,56 +70,17 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <div className="w-full bg-[#0b0b0c] text-[#f4f4f2] min-h-screen selection:bg-[#9b8afb]/20 selection:text-[#f4f4f2]">
+        <div className="w-full bg-[#000000] text-[#f4f4f2] min-h-screen selection:bg-[#9b8afb]/20 selection:text-[#f4f4f2]">
             
-            {/* 1. HERO SECTION (id="home") */}
+            {/* 1. HERO SECTION (id="home") - Neural Network Connectivity Interface */}
             <section 
                 id="home" 
-                className="w-full max-w-[1160px] mx-auto px-6 sm:px-8 lg:px-12 pt-10 pb-16 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28"
+                className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 sm:pt-10 sm:pb-16 lg:pt-12 lg:pb-20 overflow-hidden"
             >
-                <div className="flex flex-col items-center text-center">
-                    
-                    {/* Glowing 3D Rotating Brain Video (Background Removed) */}
-                    <div className="relative mb-8 sm:mb-10 flex items-center justify-center">
-                        <GlowingBrainVideo />
-                    </div>
-
-                    {/* Editorial Eyebrow */}
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#8d8d92] mb-4 block">
-                        Memory care companion
-                    </span>
-
-                    {/* Headline with The Seasons + Instrument Serif Cursive Pairing */}
-                    <h1 
-                        className="font-seasons text-4xl sm:text-5xl lg:text-[62px] tracking-[-0.025em] leading-[1.08] text-[#f4f4f2] mb-6 max-w-3xl"
-                    >
-                        Your intelligent <span className="font-editorial italic font-normal text-[#9b8afb] text-[1.12em]">second memory</span>
-                    </h1>
-
-                    {/* Subtitle */}
-                    <p className="text-[#8d8d92] text-base sm:text-lg leading-[1.65] max-w-xl mb-9">
-                        Mavora helps people living with dementia remember faces, objects and medicines, and gives their families real-time reassurance.
-                    </p>
-
-                    {/* Centered CTA Buttons */}
-                    <div className="flex flex-wrap items-center justify-center gap-3.5">
-                        <button
-                            onClick={onGetStarted}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] text-sm font-semibold rounded-xl transition-all duration-150 whitespace-nowrap shadow-lg shadow-white/5 active:scale-95 cursor-pointer"
-                        >
-                            <span>Get started</span>
-                            <ArrowRight size={15} />
-                        </button>
-
-                        <button
-                            onClick={onLaunchFamily}
-                            className="inline-flex items-center px-6 py-3 border border-[rgba(244,244,242,0.18)] hover:border-white/30 text-[#f4f4f2] hover:bg-[rgba(244,244,242,0.06)] text-sm font-semibold rounded-xl transition-all duration-150 whitespace-nowrap active:scale-95 cursor-pointer"
-                        >
-                            I'm a caregiver
-                        </button>
-                    </div>
-
-                </div>
+                <NeuralNetworkHero 
+                    onGetStarted={onGetStarted} 
+                    onLaunchFamily={onLaunchFamily} 
+                />
             </section>
 
             {/* 2. FEATURES SECTION (id="features") */}
