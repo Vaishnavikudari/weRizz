@@ -29,7 +29,7 @@ import AudioRecorder from '../components/AudioRecorder';
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
 const CaregiverPortal = () => {
-    const [activeSection, setActiveSection] = useState('enrolled'); // 'enrolled' | 'enroll' | 'schedule'
+    const [activeSection, setActiveSection] = useState('enroll'); // 'enroll' | 'enrolled' | 'schedule'
     
     // People list state
     const [people, setPeople] = useState([]);
@@ -320,6 +320,16 @@ const CaregiverPortal = () => {
                 {/* Sub-tab selection */}
                 <div className="flex bg-[#121217] border border-white/10 p-1.5 rounded-2xl gap-1">
                     <button
+                        onClick={() => setActiveSection('enroll')}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                            activeSection === 'enroll'
+                                ? 'bg-white text-black shadow-sm font-semibold'
+                                : 'text-slate-400 hover:text-white'
+                        }`}
+                    >
+                        <UserPlus size={15} /> Enroll New Person
+                    </button>
+                    <button
                         onClick={() => { setActiveSection('enrolled'); fetchPeople(); }}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                             activeSection === 'enrolled'
@@ -330,20 +340,10 @@ const CaregiverPortal = () => {
                         <Users size={15} /> 
                         <span>Enrolled Memory Bank</span>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                            activeSection === 'enrolled' ? 'bg-white/20 text-white' : 'bg-white/10 text-slate-400'
+                            activeSection === 'enrolled' ? 'bg-black/10 text-black font-semibold' : 'bg-white/10 text-slate-400'
                         }`}>
                             {people.length}
                         </span>
-                    </button>
-                    <button
-                        onClick={() => setActiveSection('enroll')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                            activeSection === 'enroll'
-                                ? 'bg-white text-black shadow-sm font-semibold'
-                                : 'text-slate-400 hover:text-white'
-                        }`}
-                    >
-                        <UserPlus size={15} /> Enroll New Person
                     </button>
                     <button
                         onClick={() => setActiveSection('schedule')}
