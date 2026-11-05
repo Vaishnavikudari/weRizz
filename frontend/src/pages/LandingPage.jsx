@@ -1,53 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import NeuralNetworkHero from '../components/NeuralNetworkHero';
-import { 
-    MessageCircle, Pill, CalendarPlus, ScanLine, 
-    Users, MapPin, Navigation, BellRing, ArrowRight 
-} from 'lucide-react';
-
-const FEATURES = [
-    {
-        title: "Assistant",
-        icon: MessageCircle,
-        line: "Talks and answers, in a calm voice."
-    },
-    {
-        title: "Medicine reminder",
-        icon: Pill,
-        line: "One-tap confirm for every dose."
-    },
-    {
-        title: "Add medicines",
-        icon: CalendarPlus,
-        line: "Times, dose and a photo of the pill."
-    },
-    {
-        title: "Scan",
-        icon: ScanLine,
-        line: "Point the camera at a face or object. Get a name and notes."
-    },
-    {
-        title: "People & items",
-        icon: Users,
-        line: "Photos and notes for the people and things that matter."
-    },
-    {
-        title: "Live location",
-        icon: MapPin,
-        line: "Map view with a safe zone for family."
-    },
-    {
-        title: "Take me home",
-        icon: Navigation,
-        line: "Simple directions back home when lost."
-    },
-    {
-        title: "Alerts & log",
-        icon: BellRing,
-        line: "Missed doses and SOS events, recorded."
-    }
-];
+import { ArrowRight } from 'lucide-react';
 
 const STEPS = [
     {
@@ -71,11 +25,9 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
     const currentYear = new Date().getFullYear();
     const [scrollPercent, setScrollPercent] = useState(0);
 
-    const [featuresVisible, setFeaturesVisible] = useState(false);
     const [stepsVisible, setStepsVisible] = useState(false);
     const [audiencesVisible, setAudiencesVisible] = useState(false);
 
-    const featuresRef = useRef(null);
     const stepsRef = useRef(null);
     const audiencesRef = useRef(null);
 
@@ -94,10 +46,6 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
             const winH = window.innerHeight;
             const threshold = winH * 0.90;
 
-            if (featuresRef.current) {
-                const r = featuresRef.current.getBoundingClientRect();
-                if (r.top <= threshold) setFeaturesVisible(true);
-            }
             if (stepsRef.current) {
                 const r = stepsRef.current.getBoundingClientRect();
                 if (r.top <= threshold) setStepsVisible(true);
@@ -146,59 +94,7 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
                 />
             </section>
 
-            {/* 2. FEATURES SECTION (id="features") */}
-            <section 
-                id="features" 
-                ref={featuresRef}
-                className="w-full max-w-[1440px] xl:max-w-[1520px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-16 sm:py-24 lg:py-28 border-t border-white/10 relative z-10"
-            >
-                <motion.div 
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={featuresVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                    className="max-w-2xl mb-12 sm:mb-16"
-                >
-                    <span className="font-mono text-xs sm:text-sm uppercase tracking-wider text-[#60A5FA] mb-3 block font-semibold">
-                        What it does
-                    </span>
-                    <h2 
-                        className="font-serif text-3xl sm:text-4xl lg:text-5xl tracking-[-0.02em] leading-[1.15] text-white"
-                        style={{ fontFamily: 'Georgia, "Instrument Serif", serif' }}
-                    >
-                        Eight small tools, one simple routine.
-                    </h2>
-                </motion.div>
-
-                {/* Big Attached Unified Box (4-column ruled grid) with Pop-Up Animation */}
-                <motion.div 
-                    initial={{ opacity: 0, y: 55, scale: 0.93 }}
-                    animate={featuresVisible ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 55, scale: 0.93 }}
-                    transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-white/15 rounded-2xl lg:rounded-3xl overflow-hidden bg-[#0A1538]/75 backdrop-blur-xl shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
-                >
-                    {FEATURES.map((item, idx) => {
-                        const Icon = item.icon;
-                        return (
-                            <div 
-                                key={idx} 
-                                className="p-8 sm:p-9 lg:p-10 border-r border-b border-white/15 flex flex-col justify-between min-h-[220px] sm:min-h-[240px] lg:min-h-[260px] bg-[#0A1538]/60 backdrop-blur-md hover:bg-[#0E1F4D]/90 transition-colors duration-200 group"
-                            >
-                                <div>
-                                    <Icon size={24} className="text-[#60A5FA] mb-5 stroke-[1.6] group-hover:scale-110 group-hover:text-blue-300 transition-all duration-200" />
-                                    <h3 className="text-white text-lg sm:text-xl font-medium mb-2.5 tracking-tight group-hover:text-blue-200 transition-colors">
-                                        {item.title}
-                                    </h3>
-                                </div>
-                                <p className="text-white/75 text-sm sm:text-base leading-relaxed">
-                                    {item.line}
-                                </p>
-                            </div>
-                        );
-                    })}
-                </motion.div>
-            </section>
-
-            {/* 3. HOW IT WORKS SECTION (id="how-it-works") */}
+            {/* 2. HOW IT WORKS SECTION (id="how-it-works") */}
             <section 
                 id="how-it-works" 
                 ref={stepsRef}
@@ -252,7 +148,7 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
                 </motion.div>
             </section>
 
-            {/* 4. TWO AUDIENCES SECTION (id="get-started") */}
+            {/* 3. TWO AUDIENCES SECTION (id="get-started") */}
             <section 
                 id="get-started" 
                 ref={audiencesRef}
@@ -321,7 +217,7 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
                 </motion.div>
             </section>
 
-            {/* 5. FOOTER */}
+            {/* 4. FOOTER */}
             <footer className="w-full border-t border-white/10 py-10 px-4 sm:px-6 md:px-10 lg:px-12 relative z-10">
                 <div className="max-w-[1440px] xl:max-w-[1520px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-white/70">
                     <p>© {currentYear} Mavora</p>
