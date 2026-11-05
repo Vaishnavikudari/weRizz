@@ -16,6 +16,7 @@ import {
     ArrowLeft 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playCaregiverBreachSound, playPatientCalmChime, speakBreachAlert } from '../utils/geofenceSound';
 
 // Haversine distance calculator between 2 coordinates in meters
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -183,6 +184,27 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
     );
 
     const isWandering = currentDistance > safeRadius;
+    const lastWanderingRef = useRef(false);
+
+    useEffect(() => {
+        if (isWandering && !alertMuted) {
+            if (!lastWanderingRef.current) {
+                lastWanderingRef.current = true;
+                if (isPatient) {
+                    playPatientCalmChime();
+                    speakBreachAlert(`Please stay calm. You are ${currentDistance} meters from home. Tap Guide Me Home to return safely.`);
+                } else {
+                    playCaregiverBreachSound();
+                    const distText = currentDistance >= 1000 
+                        ? `${(currentDistance / 1000).toFixed(1)} kilometers` 
+                        : `${currentDistance} meters`;
+                    speakBreachAlert(`Wandering Alert: Patient has crossed safe perimeter. Currently ${distText} from home.`);
+                }
+            }
+        } else {
+            lastWanderingRef.current = false;
+        }
+    }, [isWandering, alertMuted, isPatient, currentDistance]);
 
 
 
@@ -350,6 +372,25 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                     <PhoneCall size={16} /> Call Patient
                                 </a>
                             )}
+                            <button
+                                onClick={() => {
+                                    if (isPatient) {
+                                        playPatientCalmChime();
+                                        speakBreachAlert(`Please take a deep breath. You are ${currentDistance} meters from home. Tap Guide Me Home to return safely.`);
+                                    } else {
+                                        playCaregiverBreachSound();
+                                        const distText = currentDistance >= 1000 
+                                            ? `${(currentDistance / 1000).toFixed(1)} kilometers` 
+                                            : `${currentDistance} meters`;
+                                        speakBreachAlert(`Wandering Alert: Patient has crossed safe perimeter. Currently ${distText} away.`);
+                                    }
+                                }}
+                                className="px-3.5 py-2.5 bg-red-900/80 hover:bg-red-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                                title="Hear / Replay the wandering alert sound"
+                            >
+                                <Volume2 size={14} />
+                                <span>Hear Sound</span>
+                            </button>
                             <a
                                 href={`https://www.google.com/maps/search/?api=1&query=${patientLoc.lat},${patientLoc.lng}`}
                                 target="_blank"

@@ -4,6 +4,7 @@ import axios from 'axios';
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 import { ShieldCheck, Phone, Navigation, Home, Volume2, ArrowLeft, Heart, MapPin, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { playPatientCalmChime, speakBreachAlert } from '../utils/geofenceSound';
 
 const PatientLostView = ({ onSpeakText, onBack }) => {
     const [patientLoc, setPatientLoc] = useState({ lat: 12.9725, lng: 77.5955 });
@@ -50,8 +51,20 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
 
     const calmingMessage = "Please take a deep breath. You are completely safe. Your family has been notified and knows your exact location. Stay right where you are or follow the walking directions home.";
 
+    // Auto-play gentle reassurance chime and voice upon opening
+    useEffect(() => {
+        playPatientCalmChime();
+        const timer = setTimeout(() => {
+            if (onSpeakText) onSpeakText(calmingMessage);
+            else speakBreachAlert(calmingMessage);
+        }, 600);
+        return () => clearTimeout(timer);
+    }, []);
+
     const handleSpeakCalm = () => {
+        playPatientCalmChime();
         if (onSpeakText) onSpeakText(calmingMessage);
+        else speakBreachAlert(calmingMessage);
     };
 
     const handleOpenDirections = () => {

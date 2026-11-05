@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { playCaregiverBreachSound, speakBreachAlert } from '../utils/geofenceSound';
 import CaregiverScheduleManager from '../components/CaregiverScheduleManager';
 import CaregiverAddressManager from '../components/CaregiverAddressManager';
 import axios from 'axios';
@@ -35,15 +36,27 @@ const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
 const CaregiverPortal = ({ onNavigate }) => {
     const [geofenceAlert, setGeofenceAlert] = useState(null);
-    // Real-time Geofence watcher
+    const lastAlertStateRef = useRef(false);
+
+    // Real-time Geofence watcher with audible breach notification
     useEffect(() => {
         const pollGeofence = async () => {
             try {
                 const res = await axios.get(`${API_BASE}/patient/geofence_alert`);
-                if (res.data?.active && res.data?.breached) {
+                const isBreached = Boolean(res.data?.active && res.data?.breached);
+                if (isBreached) {
                     setGeofenceAlert(res.data);
+                    if (!lastAlertStateRef.current) {
+                        lastAlertStateRef.current = true;
+                        playCaregiverBreachSound();
+                        const distText = res.data.distance_meters >= 1000 
+                            ? `${(res.data.distance_meters / 1000).toFixed(1)} kilometers` 
+                            : `${res.data.distance_meters} meters`;
+                        speakBreachAlert(`Emergency Alert: Patient has wandered outside the safe perimeter. Currently ${distText} away.`);
+                    }
                 } else {
                     setGeofenceAlert(null);
+                    lastAlertStateRef.current = false;
                 }
             } catch (e) {}
         };
@@ -358,6 +371,20 @@ const CaregiverPortal = ({ onNavigate }) => {
                                 <span>Open Live GPS Tracker</span>
                             </button>
                         )}
+                        <button
+                            onClick={() => {
+                                playCaregiverBreachSound();
+                                const distText = geofenceAlert.distance_meters >= 1000 
+                                    ? `${(geofenceAlert.distance_meters / 1000).toFixed(1)} kilometers` 
+                                    : `${geofenceAlert.distance_meters} meters`;
+                                speakBreachAlert(`Emergency Alert: Patient has wandered outside safe perimeter. Currently ${distText} away.`);
+                            }}
+                            className="px-3.5 py-2.5 bg-red-900/80 hover:bg-red-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                            title="Hear / Replay the wandering alert sound"
+                        >
+                            <Volume2 size={14} />
+                            <span>Hear Alert Sound</span>
+                        </button>
                         <a
                             href={`tel:${geofenceAlert.home_loc?.emergency_phone || '+919876543210'}`}
                             className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"

@@ -1,8 +1,8 @@
 {
-  "lat": 12.886439288593722,
-  "lng": 77.44988348087095,
-  "accuracy": 105.0,
-  "updated_at": "04:22:10 AM",
+  "lat": 12.886415646232384,
+  "lng": 77.44985247527566,
+  "accuracy": 102.0,
+  "updated_at": "04:26:17 AM",
   "is_simulated": false,
   "distance_from_home": 373133,
   "safe_radius": 500,
