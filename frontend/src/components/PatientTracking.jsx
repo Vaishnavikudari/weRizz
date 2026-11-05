@@ -61,9 +61,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
 
     const [isSimulated, setIsSimulated] = useState(false);
     const [alertMuted, setAlertMuted] = useState(false);
-    const [showAddressModal, setShowAddressModal] = useState(false);
-    const [editAddressText, setEditAddressText] = useState('');
-    const [editLandmarkText, setEditLandmarkText] = useState('');
+
 
     // Real-time backend sync across multiple devices (Laptop A <-> Laptop B)
     useEffect(() => {
@@ -186,39 +184,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
 
     const isWandering = currentDistance > safeRadius;
 
-    // Save current GPS spot as Home Base (Caregiver action)
-    const handleSetCurrentAsHome = async () => {
-        const newHome = {
-            lat: patientLoc.lat,
-            lng: patientLoc.lng,
-            address: `Saved Home (${patientLoc.lat.toFixed(4)}, ${patientLoc.lng.toFixed(4)})`,
-            radius_meters: safeRadius
-        };
-        setHomeLocation(newHome);
-        localStorage.setItem('mavora_home_loc', JSON.stringify(newHome));
-        window.dispatchEvent(new CustomEvent('mavora_home_updated', { detail: newHome }));
-        try {
-            await axios.post(`${API_BASE}/patient/safe_zone`, newHome);
-        } catch (e) {}
-        alert("Home location saved and synced across all devices!");
-    };
 
-    const handleSaveCustomAddress = async () => {
-        if (!editAddressText.trim()) return alert("Please enter an address.");
-        const updated = {
-            ...homeLocation,
-            address: editAddressText.trim(),
-            landmark: editLandmarkText.trim(),
-            radius_meters: safeRadius
-        };
-        setHomeLocation(updated);
-        localStorage.setItem('mavora_home_loc', JSON.stringify(updated));
-        window.dispatchEvent(new CustomEvent('mavora_home_updated', { detail: updated }));
-        try {
-            await axios.post(`${API_BASE}/patient/safe_zone`, updated);
-        } catch (e) {}
-        setShowAddressModal(false);
-    };
 
     // Simulate wandering outside safe zone for demo (Caregiver only)
     const toggleSimulateWander = async () => {
@@ -584,26 +550,20 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                     </div>
                                 </div>
 
-                                {/* Home Address Actions */}
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button
-                                        onClick={() => {
-                                            setEditAddressText(homeLocation.address || '');
-                                            setEditLandmarkText(homeLocation.landmark || '');
-                                            setShowAddressModal(true);
-                                        }}
-                                        className="py-2.5 bg-[#FF6B5B]/15 hover:bg-[#FF6B5B]/25 text-[#FF8E72] hover:text-white text-xs font-semibold rounded-xl border border-[#FF6B5B]/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                                    >
-                                        <MapPin size={14} />
-                                        Add / Edit Address
-                                    </button>
-                                    <button
-                                        onClick={handleSetCurrentAsHome}
-                                        className="py-2.5 bg-[#070D1E]/60 hover:bg-white/10 text-white text-xs font-semibold rounded-xl border border-white/15 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                                    >
-                                        <Home size={14} />
-                                        Pin GPS Here
-                                    </button>
+                                {/* Configured Safe Home Display */}
+                                <div className="bg-[#070D1E]/60 backdrop-blur-md p-3.5 rounded-xl border border-white/15">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Current Safe Home</span>
+                                        {onNavigate && (
+                                            <button 
+                                                onClick={() => onNavigate('caregiver')} 
+                                                className="text-[11px] text-[#60A5FA] hover:underline cursor-pointer"
+                                            >
+                                                Edit in Family Dashboard →
+                                            </button>
+                                        )}
+                                    </div>
+                                    <p className="font-mono text-zinc-300 text-xs truncate">{homeLocation.address || 'Safe Haven Home'}</p>
                                 </div>
                             </div>
 
@@ -628,92 +588,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                 </div>
             </div>
 
-            {/* Quick Address Edit Modal for Family Member */}
-            {showAddressModal && (
-                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-[#0B1736] border border-white/20 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-base font-bold text-white flex items-center gap-2">
-                                <MapPin size={18} className="text-[#FF6B5B]" />
-                                <span>Set Patient Safe Home Address</span>
-                            </h3>
-                            <button 
-                                onClick={() => setShowAddressModal(false)}
-                                className="text-white/60 hover:text-white p-1 rounded-lg"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                        <p className="text-xs text-white/70">
-                            Enter the address where the patient lives. Mavora will navigate them here when they tap "Take Me Home".
-                        </p>
-                        <div className="space-y-3">
-                            <div>
-                                <label className="block text-[11px] font-semibold text-white/80 uppercase mb-1">
-                                    Full Street Address
-                                </label>
-                                <input
-                                    type="text"
-                                    value={editAddressText}
-                                    onChange={(e) => setEditAddressText(e.target.value)}
-                                    placeholder="e.g. Flat 301, 4th Cross, Green Park, Bangalore"
-                                    className="w-full px-3 py-2.5 bg-[#070D1E] border border-white/15 rounded-xl text-white text-xs focus:outline-none focus:border-[#60A5FA]"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[11px] font-semibold text-white/80 uppercase mb-1">
-                                    Landmark (Spoken by AI Guide)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={editLandmarkText}
-                                    onChange={(e) => setEditLandmarkText(e.target.value)}
-                                    placeholder="e.g. Near Apollo Pharmacy, Green Gate"
-                                    className="w-full px-3 py-2.5 bg-[#070D1E] border border-white/15 rounded-xl text-white text-xs focus:outline-none focus:border-[#60A5FA]"
-                                />
-                            </div>
-
-                            {/* Google Maps Confirmation Iframe */}
-                            <div>
-                                <label className="block text-[11px] font-semibold text-white/80 uppercase mb-1 flex items-center justify-between">
-                                    <span>Google Maps Location Preview</span>
-                                    <span className="text-[#60A5FA] font-mono text-[10px]">
-                                        ({homeLocation.lat.toFixed(4)}, {homeLocation.lng.toFixed(4)})
-                                    </span>
-                                </label>
-                                <div className="h-44 w-full rounded-2xl overflow-hidden border border-white/15 bg-slate-900">
-                                    <iframe
-                                        key={`${homeLocation.lat}-${homeLocation.lng}`}
-                                        title="Modal Google Maps Preview"
-                                        src={`https://maps.google.com/maps?q=${homeLocation.lat},${homeLocation.lng}&z=16&output=embed`}
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen=""
-                                        loading="lazy"
-                                        className="w-full h-full"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-end gap-2 pt-2">
-                            <button
-                                onClick={() => setShowAddressModal(false)}
-                                className="px-4 py-2 rounded-xl text-xs font-semibold text-white/70 hover:text-white"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSaveCustomAddress}
-                                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FF6B5B] to-[#FF8E72] text-white text-xs font-bold shadow-lg shadow-[#FF6B5B]/30 hover:opacity-95"
-                            >
-                                Save Address
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+            </div>
     );
 };
 
