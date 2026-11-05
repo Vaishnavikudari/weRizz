@@ -40,7 +40,7 @@ import GreetingPage from './pages/GreetingPage';
 
 import PatientLostView from './components/PatientLostView';
 
-import { getStoredSchedule } from './services/scheduleStore';
+import { getStoredSchedule, fetchScheduleFromBackend } from './services/scheduleStore';
 
 
 
@@ -186,6 +186,7 @@ function App() {
   };
 
   useEffect(() => {
+    fetchScheduleFromBackend().catch(() => {});
     setSuggestions(getLanguageSuggestions(selectedLanguage));
   }, [selectedLanguage]);
 
