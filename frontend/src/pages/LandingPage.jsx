@@ -3,7 +3,6 @@ import {
     MessageCircle, Pill, CalendarPlus, ScanLine, 
     Users, MapPin, Navigation, BellRing, ArrowRight 
 } from 'lucide-react';
-import BrainCanvas from '../components/BrainCanvas';
 
 const FEATURES = [
     {
@@ -75,50 +74,56 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
             {/* 1. HERO SECTION (id="home") */}
             <section 
                 id="home" 
-                className="w-full max-w-[1160px] mx-auto px-6 sm:px-8 lg:px-12 py-16 sm:py-24 lg:py-28"
+                className="w-full max-w-[1160px] mx-auto px-6 sm:px-8 lg:px-12 pt-10 pb-16 sm:pt-14 sm:pb-24 lg:pt-16 lg:pb-28"
             >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div className="flex flex-col items-center text-center">
                     
-                    {/* Left Column: Editorial Typography & Actions */}
-                    <div className="lg:col-span-6 flex flex-col justify-center">
-                        <span className="font-mono text-[11px] uppercase tracking-wider text-[#8d8d92] mb-5 block">
-                            Memory care companion
-                        </span>
-
-                        <h1 
-                            className="font-serif text-4xl sm:text-5xl lg:text-[56px] tracking-[-0.025em] leading-[1.05] text-[#f4f4f2] mb-6"
-                            style={{ fontFamily: 'Georgia, "Instrument Serif", serif' }}
-                        >
-                            Your intelligent <span className="italic text-[#9b8afb]">second memory</span>
-                        </h1>
-
-                        <p className="text-[#8d8d92] text-base sm:text-lg leading-[1.6] max-w-xl mb-8">
-                            Mavora helps people living with dementia remember faces, objects and medicines, and gives their families real-time reassurance.
-                        </p>
-
-                        <div className="flex flex-wrap items-center gap-3">
-                            <button
-                                onClick={onGetStarted}
-                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#f4f4f2] text-[#0b0b0c] text-sm font-medium rounded-lg hover:bg-[#e2e2e0] transition-colors duration-150 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f4f4f2] cursor-pointer"
-                            >
-                                <span>Get started</span>
-                                <ArrowRight size={15} />
-                            </button>
-
-                            <button
-                                onClick={onLaunchFamily}
-                                className="inline-flex items-center px-5 py-2.5 border border-[rgba(244,244,242,0.15)] text-[#f4f4f2] text-sm font-medium rounded-lg hover:bg-[rgba(244,244,242,0.05)] transition-colors duration-150 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f4f4f2] cursor-pointer"
-                            >
-                                I'm a caregiver
-                            </button>
-                        </div>
+                    {/* Glowing Brain in the Center Top */}
+                    <div className="relative mb-8 sm:mb-10 flex items-center justify-center group">
+                        {/* Soft subtle ambient neural aura behind the brain */}
+                        <div className="absolute w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[radial-gradient(circle,rgba(155,138,251,0.22)_0%,rgba(155,138,251,0.06)_42%,transparent_72%)] blur-2xl pointer-events-none" />
+                        
+                        <img 
+                            src="/assets/glowing_brain.png" 
+                            alt="Mavora Glowing Neural Brain"
+                            className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 object-contain drop-shadow-[0_0_40px_rgba(155,138,251,0.35)] transition-transform duration-700 ease-out hover:scale-105 select-none pointer-events-none animate-pulse"
+                            style={{ animationDuration: '4.5s' }}
+                        />
                     </div>
 
-                    {/* Right Column: Restrained 3D Particle Brain (Transparent, no circle/halo) */}
-                    <div className="lg:col-span-6 w-full flex items-center justify-center">
-                        <div className="w-full max-w-[480px] aspect-square relative flex items-center justify-center">
-                            <BrainCanvas className="w-full h-full flex items-center justify-center relative select-none pointer-events-none" />
-                        </div>
+                    {/* Editorial Eyebrow */}
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#8d8d92] mb-4 block">
+                        Memory care companion
+                    </span>
+
+                    {/* Headline with The Seasons + Instrument Serif Cursive Pairing */}
+                    <h1 
+                        className="font-seasons text-4xl sm:text-5xl lg:text-[62px] tracking-[-0.025em] leading-[1.08] text-[#f4f4f2] mb-6 max-w-3xl"
+                    >
+                        Your intelligent <span className="font-editorial italic font-normal text-[#9b8afb] text-[1.12em]">second memory</span>
+                    </h1>
+
+                    {/* Subtitle */}
+                    <p className="text-[#8d8d92] text-base sm:text-lg leading-[1.65] max-w-xl mb-9">
+                        Mavora helps people living with dementia remember faces, objects and medicines, and gives their families real-time reassurance.
+                    </p>
+
+                    {/* Centered CTA Buttons */}
+                    <div className="flex flex-wrap items-center justify-center gap-3.5">
+                        <button
+                            onClick={onGetStarted}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] text-sm font-semibold rounded-xl transition-all duration-150 whitespace-nowrap shadow-lg shadow-white/5 active:scale-95 cursor-pointer"
+                        >
+                            <span>Get started</span>
+                            <ArrowRight size={15} />
+                        </button>
+
+                        <button
+                            onClick={onLaunchFamily}
+                            className="inline-flex items-center px-6 py-3 border border-[rgba(244,244,242,0.18)] hover:border-white/30 text-[#f4f4f2] hover:bg-[rgba(244,244,242,0.06)] text-sm font-semibold rounded-xl transition-all duration-150 whitespace-nowrap active:scale-95 cursor-pointer"
+                        >
+                            I'm a caregiver
+                        </button>
                     </div>
 
                 </div>
