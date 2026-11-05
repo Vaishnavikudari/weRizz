@@ -302,7 +302,7 @@ const CaregiverPortal = () => {
     });
 
     return (
-        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-8 overflow-y-auto">
+        <div className="w-full min-h-full bg-transparent text-white px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24">
             {/* Top Caregiver Header */}
             <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
@@ -310,7 +310,7 @@ const CaregiverPortal = () => {
                         Caretaker & family control panel
                     </span>
                     <h1 
-                        className="font-serif text-3xl sm:text-4xl text-[#F4EDE0] tracking-[-0.025em] leading-[1.08] mb-2"
+                        className="font-serif text-3xl sm:text-4xl text-[#F4EDE0] tracking-tight leading-snug mb-2"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
                         Caregiver management <span className="italic text-[#FF6B5B]">portal</span>
@@ -755,7 +755,7 @@ const CaregiverPortal = () => {
 
             {/* CONFIRM DELETE MODAL */}
             {deleteModalPerson && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#14141a] border border-rose-500/40 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                         <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-4">
                             <Trash2 size={24} />
@@ -798,7 +798,7 @@ const CaregiverPortal = () => {
 
             {/* CONFIRM CLEAR ALL MODAL */}
             {showClearAllModal && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#14141a] border border-rose-500/40 rounded-3xl p-6 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                         <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 mb-4">
                             <AlertTriangle size={24} />
@@ -840,7 +840,7 @@ const CaregiverPortal = () => {
             )}
             {/* EDIT PERSON MODAL */}
             {editModalPerson && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
                     <div className="bg-[#14141a] border border-[#F4EDE0]/15 rounded-3xl p-6 md:p-8 max-w-xl w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-8">
                         <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F4EDE0]/15">
                             <div className="flex items-center gap-3">
@@ -1052,7 +1052,7 @@ const CaregiverPortal = () => {
 
             {/* QUICK RECORD VOICE MODAL */}
             {recordModalPerson && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#14141a] border border-emerald-500/40 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#F4EDE0]/15">
                             <div className="flex items-center gap-3">

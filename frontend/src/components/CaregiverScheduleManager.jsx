@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 import { 
     Clock, 
     Pill, 
@@ -16,13 +19,32 @@ import {
     Play,
     Volume2,
     Sparkles,
-    Bell
+    Bell,
+    Phone,
+    AlertCircle,
+    ShieldAlert,
+    Camera
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getStoredSchedule, saveStoredSchedule, fetchScheduleFromBackend } from '../services/scheduleStore';
 
 const CaregiverScheduleManager = () => {
+    const handleSimulateGeofenceBreach = async () => {
+        try {
+            await axios.post(`${API_BASE}/patient/simulate_geofence_breach`, {
+                distance_meters: 850,
+                radius_meters: 500
+            });
+            setTriggerFeedback("🚨 Simulated Wandering Breach Triggered! (Patient 850m outside home)");
+            setTimeout(() => setTriggerFeedback(null), 5000);
+        } catch (e) {
+            alert("Failed to simulate breach: " + e.message);
+        }
+    };
+
     const [schedule, setSchedule] = useState(getStoredSchedule());
+    const [escalationAlert, setEscalationAlert] = useState(null);
+    const [triggerFeedback, setTriggerFeedback] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [activeRecordItem, setActiveRecordItem] = useState(null); // If recording for an existing item
 
@@ -51,9 +73,34 @@ const CaregiverScheduleManager = () => {
         const handleUpdate = () => setSchedule(getStoredSchedule());
         window.addEventListener('storage_schedule_updated', handleUpdate);
         window.addEventListener('storage', handleUpdate);
+
+        // Real-time two-way synchronization: auto-syncs when Patient clicks "I Took My Medicine" on Laptop A!
+        const syncFreshSchedule = async () => {
+            try {
+                const fresh = await fetchScheduleFromBackend();
+                if (fresh) setSchedule(fresh);
+            } catch (e) {}
+        };
+        const schedTimer = setInterval(syncFreshSchedule, 2000);
+
+        // Cross-laptop escalation watcher: displays emergency alert if patient ignores medication
+        const pollEscalation = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/schedule/escalation_alert`);
+                if (res.data?.active) {
+                    setEscalationAlert(res.data);
+                } else {
+                    setEscalationAlert(null);
+                }
+            } catch (e) {}
+        };
+        const escTimer = setInterval(pollEscalation, 2000);
+
         return () => {
             window.removeEventListener('storage_schedule_updated', handleUpdate);
             window.removeEventListener('storage', handleUpdate);
+            clearInterval(schedTimer);
+            clearInterval(escTimer);
         };
     }, []);
 
@@ -138,9 +185,20 @@ const CaregiverScheduleManager = () => {
         setSchedule(updated);
     };
 
-    // Trigger instant demo alarm on patient screen
-    const handleTriggerTestAlarm = (item) => {
-        window.dispatchEvent(new CustomEvent('trigger_medication_alarm', { detail: { item } }));
+    // Trigger cross-laptop remote alarm to sound ONLY on patient's device (Laptop A)!
+    const handleTriggerTestAlarm = async (item) => {
+        const target = item || schedule.find(s => s.category === 'medicine') || schedule[1];
+        try {
+            await axios.post(`${API_BASE}/schedule/trigger_alarm`, {
+                item: target,
+                triggered_by: "Caregiver Portal"
+            });
+            setTriggerFeedback(`✓ Remote Alarm Signal Dispatched! Ringing on Dad's terminal for ${target.title}...`);
+            setTimeout(() => setTriggerFeedback(null), 5000);
+        } catch (e) {
+            console.warn("Remote alarm error:", e.message);
+            alert("Could not reach backend to trigger remote alarm: " + e.message);
+        }
     };
 
     // Save newly recorded voice for an existing item
@@ -195,6 +253,56 @@ const CaregiverScheduleManager = () => {
 
     return (
         <div className="w-full bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-3xl p-6 shadow-2xl mt-6">
+            {/* Remote Trigger Toast Feedback */}
+            {/* Remote Trigger Toast Feedback */}
+            {triggerFeedback && (
+                <div className="mb-4 p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center justify-between shadow-lg">
+                    <span>{triggerFeedback}</span>
+                    <button onClick={() => setTriggerFeedback(null)} className="text-emerald-400 hover:text-white font-mono text-xs">✕</button>
+                </div>
+            )}
+
+            {/* Live Cross-Device Safety Escalation Banner */}
+            {escalationAlert && (
+                <div className="mb-6 p-4 rounded-2xl bg-red-950/90 border-2 border-red-500/80 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_10px_40px_rgba(239,68,68,0.35)] animate-pulse">
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-red-600 rounded-xl text-white">
+                            <AlertCircle size={24} />
+                        </div>
+                        <div>
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-red-300 font-bold block">
+                                URGENT SAFETY ESCALATION • {escalationAlert.time || 'Just now'}
+                            </span>
+                            <h4 className="text-sm sm:text-base font-bold text-white">
+                                Patient Did Not Acknowledge: {escalationAlert.item?.title || "Medication"}
+                            </h4>
+                            <p className="text-xs text-red-200">
+                                Voice reminder repeated on patient device with no response. Please verify in person or call Dad.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end md:self-center">
+                        <a
+                            href="tel:+919876543210"
+                            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md cursor-pointer"
+                        >
+                            <Phone size={14} /> Call Dad (+91 98765 43210)
+                        </a>
+                        <button
+                            onClick={async () => {
+                                try {
+                                    await axios.post(`${API_BASE}/schedule/dismiss_alarm`);
+                                } catch (e) {}
+                                setEscalationAlert(null);
+                            }}
+                            className="px-3 py-2 bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl cursor-pointer"
+                        >
+                            Dismiss Alert
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
                     <div className="flex items-center gap-2 text-zinc-300">
@@ -211,12 +319,21 @@ const CaregiverScheduleManager = () => {
 
                 <div className="flex items-center gap-3">
                     <button
+                        onClick={handleSimulateGeofenceBreach}
+                        className="px-3.5 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
+                        title="Simulate patient wandering 850m outside safe boundary"
+                    >
+                        <ShieldAlert size={14} />
+                        <span>Simulate Geofence Alert</span>
+                    </button>
+
+                    <button
                         onClick={() => handleTriggerTestAlarm(schedule.find(s => s.category === 'medicine'))}
                         className="px-4 py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 font-bold text-xs rounded-xl flex items-center gap-2 transition-all active:scale-95 cursor-pointer shadow-sm"
                         title="Simulate scheduled alarm right now"
                     >
                         <Bell size={15} />
-                        <span>Test Voice Alarm (Demo)</span>
+                        <span>Trigger Alarm on Patient Device</span>
                     </button>
 
                     <button
@@ -235,7 +352,7 @@ const CaregiverScheduleManager = () => {
             {/* Modal for recording voice on existing item */}
             <AnimatePresence>
                 {activeRecordItem && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -339,7 +456,7 @@ const CaregiverScheduleManager = () => {
             {/* Modal for adding new routine */}
             <AnimatePresence>
                 {showAddModal && (
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -572,7 +689,7 @@ const CaregiverScheduleManager = () => {
                                         title="Play alarm immediately on patient laptop"
                                     >
                                         <Bell size={13} />
-                                        <span>Test Alarm</span>
+                                        <span>Trigger on Patient Screen</span>
                                     </button>
                                 </>
                             )}
@@ -583,6 +700,7 @@ const CaregiverScheduleManager = () => {
                                         <CheckCircle2 size={15} />
                                         Taken at {item.takenAt} ({item.takenBy === 'family' ? 'Caregiver' : 'Patient'})
                                     </span>
+
                                     <button
                                         onClick={() => handleToggleGiven(item.id)}
                                         title="Mark as un-taken (undo)"
@@ -610,6 +728,8 @@ const CaregiverScheduleManager = () => {
                     </div>
                 ))}
             </div>
+
+
         </div>
     );
 };

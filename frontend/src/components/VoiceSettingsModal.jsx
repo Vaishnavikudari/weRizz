@@ -98,7 +98,7 @@ const VoiceSettingsModal = ({ isOpen, onClose, onTestSpeak }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[2000] bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">

@@ -30,6 +30,8 @@ import CaregiverDashboard from './pages/CaregiverPortal';
 
 import PatientScheduleView from './components/PatientScheduleView';
 import MedicationAlarmModal from './components/MedicationAlarmModal';
+import CaregiverGeofenceAlert from './components/CaregiverGeofenceAlert';
+import PatientGpsBeacon from './components/PatientGpsBeacon';
 
 import NavBar from './components/SideNav'; // Imported as NavBar
 
@@ -1079,7 +1081,9 @@ function App() {
   return (
 
     <ThemeProvider>
-      <MedicationAlarmModal />
+      {view !== 'caregiver' && view !== 'tracking' && <MedicationAlarmModal />}
+      {view !== 'caregiver' && view !== 'tracking' && <PatientGpsBeacon />}
+      {(view === 'caregiver' || view === 'tracking') && <CaregiverGeofenceAlert onViewChange={setView} />}
       {showIntro && <WeRizzIntro onComplete={() => setShowIntro(false)} />}
 
       <div className="fixed inset-0 w-screen h-screen flex flex-col bg-[#070D1E] text-white transition-colors duration-300 overflow-hidden">

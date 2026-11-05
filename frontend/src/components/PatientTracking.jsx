@@ -220,23 +220,46 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
     };
 
     // Simulate wandering outside safe zone for demo (Caregiver only)
-    const toggleSimulateWander = () => {
+    const toggleSimulateWander = async () => {
         if (!isSimulated) {
             setIsSimulated(true);
-            setPatientLoc({
-                lat: homeLocation.lat + 0.0032,
-                lng: homeLocation.lng + 0.0035,
+            const simLat = homeLocation.lat + 0.0055;
+            const simLng = homeLocation.lng + 0.0055;
+            const updated = {
+                lat: simLat,
+                lng: simLng,
                 accuracy: 5,
                 lastUpdated: new Date().toLocaleTimeString()
-            });
+            };
+            setPatientLoc(updated);
+            try {
+                await axios.post(`${API_BASE}/patient/live_location`, {
+                    lat: simLat,
+                    lng: simLng,
+                    accuracy: 5,
+                    is_simulated: true
+                });
+            } catch (e) {}
         } else {
             setIsSimulated(false);
-            setPatientLoc({
-                lat: homeLocation.lat + 0.0002,
-                lng: homeLocation.lng + 0.0002,
+            const homeLat = homeLocation.lat + 0.0002;
+            const homeLng = homeLocation.lng + 0.0002;
+            const updated = {
+                lat: homeLat,
+                lng: homeLng,
                 accuracy: 8,
                 lastUpdated: new Date().toLocaleTimeString()
-            });
+            };
+            setPatientLoc(updated);
+            try {
+                await axios.post(`${API_BASE}/patient/live_location`, {
+                    lat: homeLat,
+                    lng: homeLng,
+                    accuracy: 8,
+                    is_simulated: false
+                });
+                await axios.post(`${API_BASE}/patient/dismiss_geofence`);
+            } catch (e) {}
         }
     };
 
@@ -268,7 +291,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
     };
 
     return (
-        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-8 overflow-y-auto">
+        <div className="w-full min-h-full bg-transparent text-white px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24">
             {/* Top Header - Minimalist Black & Cursive */}
             <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
@@ -595,7 +618,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
 
             {/* Quick Address Edit Modal for Family Member */}
             {showAddressModal && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#0B1736] border border-white/20 rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between">
                             <h3 className="text-base font-bold text-white flex items-center gap-2">

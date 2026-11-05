@@ -351,7 +351,7 @@ const EnrolledMemoryBankView = ({ onBack, onEnrollNew, onSpeakText }) => {
 
             {/* Confirm Delete Modal */}
             {deleteModalPerson && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
                     <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl">

@@ -61,7 +61,7 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
     };
 
     return (
-        <div className="h-full w-full overflow-y-auto px-4 py-6 md:p-8 flex flex-col items-center select-none bg-transparent text-white">
+        <div className="w-full min-h-full px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24 flex flex-col items-center select-none bg-transparent text-white">
             <div className="w-full max-w-3xl space-y-6">
 
                 {/* Back button */}

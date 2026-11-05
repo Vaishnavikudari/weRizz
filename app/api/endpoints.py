@@ -13,6 +13,8 @@ from typing import Dict, Any
 import base64
 from PIL import Image
 import io
+import math
+import time
 
 router = APIRouter()
 
@@ -684,6 +686,17 @@ async def update_patient_safe_zone(zone: SafeZoneModel):
 
 
 PATIENT_LOC_FILE = Path("data/patient_location.json")
+GEOFENCE_ALERT_FILE = Path("data/geofence_alert.json")
+
+def haversine_distance_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> int:
+    R = 6371000.0
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    d_phi = math.radians(lat2 - lat1)
+    d_lambda = math.radians(lon2 - lon1)
+    a = math.sin(d_phi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * (math.sin(d_lambda / 2.0) ** 2)
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+    return int(round(R * c))
 
 class PatientLocModel(BaseModel):
     lat: float
@@ -714,9 +727,137 @@ async def update_patient_live_location(loc: PatientLocModel):
         PATIENT_LOC_FILE.parent.mkdir(parents=True, exist_ok=True)
         data = loc.dict()
         data["updated_at"] = time.strftime("%I:%M:%S %p")
+
+        # Calculate live distance against safe zone
+        safe_data = None
+        if SAFE_ZONE_FILE.exists():
+            try:
+                with open(SAFE_ZONE_FILE, "r", encoding="utf-8") as sf:
+                    safe_data = json.load(sf)
+            except Exception:
+                pass
+
+        home_lat = safe_data.get("lat", 12.9716) if safe_data else 12.9716
+        home_lng = safe_data.get("lng", 77.5946) if safe_data else 77.5946
+        radius = safe_data.get("radius_meters", 500) if safe_data else 500
+
+        dist = haversine_distance_meters(loc.lat, loc.lng, home_lat, home_lng)
+        data["distance_from_home"] = dist
+        data["safe_radius"] = radius
+        data["is_wandering"] = dist > radius
+
         with open(PATIENT_LOC_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
+
+        # Update geofence breach alert status
+        GEOFENCE_ALERT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        if dist > radius:
+            geofence_data = {
+                "active": True,
+                "breached": True,
+                "distance_meters": dist,
+                "radius_meters": radius,
+                "patient_loc": {"lat": loc.lat, "lng": loc.lng, "accuracy": loc.accuracy},
+                "home_loc": {
+                    "lat": home_lat,
+                    "lng": home_lng,
+                    "address": safe_data.get("address", "Safe Haven Home") if safe_data else "Safe Haven Home",
+                    "emergency_phone": safe_data.get("emergency_phone", "+91 98765 43210") if safe_data else "+91 98765 43210"
+                },
+                "breached_at": time.strftime("%I:%M:%S %p"),
+                "message": f"Patient has crossed the {radius}m safe boundary! Currently {dist}m away."
+            }
+            with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
+                json.dump(geofence_data, gf, indent=2)
+            print(f"[GEOFENCE BREACH] Patient {dist}m from home (Safe Limit: {radius}m)")
+        elif GEOFENCE_ALERT_FILE.exists():
+            try:
+                with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
+                    existing_alert = json.load(gf)
+                if existing_alert.get("active"):
+                    existing_alert["active"] = False
+                    existing_alert["resolved_at"] = time.strftime("%I:%M:%S %p")
+                    with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
+                        json.dump(existing_alert, gf, indent=2)
+            except Exception:
+                pass
+
         return {"status": "success", "location": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/patient/geofence_alert")
+async def get_geofence_alert():
+    try:
+        if GEOFENCE_ALERT_FILE.exists():
+            with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
+                return json.load(gf)
+        return {"active": False}
+    except Exception as e:
+        return {"active": False}
+
+@router.post("/patient/dismiss_geofence")
+async def dismiss_geofence_alert():
+    try:
+        if GEOFENCE_ALERT_FILE.exists():
+            with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
+                json.dump({"active": False, "dismissed_at": time.strftime("%I:%M:%S %p")}, gf, indent=2)
+        return {"status": "dismissed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/patient/simulate_geofence_breach")
+async def simulate_geofence_breach(payload: dict = Body(...)):
+    try:
+        dist = payload.get("distance_meters", 820)
+        radius = payload.get("radius_meters", 500)
+        safe_data = None
+        if SAFE_ZONE_FILE.exists():
+            try:
+                with open(SAFE_ZONE_FILE, "r", encoding="utf-8") as sf:
+                    safe_data = json.load(sf)
+            except Exception:
+                pass
+        home_lat = safe_data.get("lat", 12.9716) if safe_data else 12.9716
+        home_lng = safe_data.get("lng", 77.5946) if safe_data else 77.5946
+
+        sim_lat = home_lat + 0.0055
+        sim_lng = home_lng + 0.0055
+
+        PATIENT_LOC_FILE.parent.mkdir(parents=True, exist_ok=True)
+        loc_data = {
+            "lat": sim_lat,
+            "lng": sim_lng,
+            "accuracy": 8,
+            "updated_at": time.strftime("%I:%M:%S %p"),
+            "is_simulated": True,
+            "distance_from_home": dist,
+            "safe_radius": radius,
+            "is_wandering": True
+        }
+        with open(PATIENT_LOC_FILE, "w", encoding="utf-8") as f:
+            json.dump(loc_data, f, indent=2)
+
+        GEOFENCE_ALERT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        geofence_data = {
+            "active": True,
+            "breached": True,
+            "distance_meters": dist,
+            "radius_meters": radius,
+            "patient_loc": {"lat": sim_lat, "lng": sim_lng, "accuracy": 8},
+            "home_loc": {
+                "lat": home_lat,
+                "lng": home_lng,
+                "address": safe_data.get("address", "Safe Haven Home") if safe_data else "Safe Haven Home",
+                "emergency_phone": safe_data.get("emergency_phone", "+91 98765 43210") if safe_data else "+91 98765 43210"
+            },
+            "breached_at": time.strftime("%I:%M:%S %p"),
+            "message": f"Patient has crossed the {radius}m safe boundary! Currently {dist}m away."
+        }
+        with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
+            json.dump(geofence_data, gf, indent=2)
+
+        return {"status": "breach_simulated", "alert": geofence_data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -806,5 +947,82 @@ async def update_schedule(items: list = Body(...)):
         with open(SCHEDULE_FILE, "w", encoding="utf-8") as f:
             json.dump(items, f, indent=2)
         return {"status": "success", "count": len(items)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+ACTIVE_ALARM_FILE = Path("data/active_alarm.json")
+ESCALATION_FILE = Path("data/escalation_alert.json")
+
+class AlarmTriggerModel(BaseModel):
+    item: dict
+    triggered_by: Optional[str] = "caregiver"
+
+@router.get("/schedule/active_alarm")
+async def get_active_alarm():
+    try:
+        if ACTIVE_ALARM_FILE.exists():
+            with open(ACTIVE_ALARM_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {"active": False, "item": None}
+    except Exception as e:
+        return {"active": False, "item": None}
+
+@router.post("/schedule/trigger_alarm")
+async def trigger_alarm_remote(data: AlarmTriggerModel):
+    try:
+        ACTIVE_ALARM_FILE.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "active": True,
+            "item": data.item,
+            "triggered_by": data.triggered_by,
+            "triggered_at": time.time(),
+            "timestamp_str": time.strftime("%I:%M:%S %p")
+        }
+        with open(ACTIVE_ALARM_FILE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2)
+        print(f"[ALARM] Triggered remote alarm for {data.item.get('title')}")
+        return {"status": "success", "alarm": payload}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/schedule/dismiss_alarm")
+async def dismiss_alarm_remote():
+    try:
+        ACTIVE_ALARM_FILE.parent.mkdir(parents=True, exist_ok=True)
+        payload = {"active": False, "item": None, "dismissed_at": time.strftime("%I:%M:%S %p")}
+        with open(ACTIVE_ALARM_FILE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2)
+        if ESCALATION_FILE.exists():
+            with open(ESCALATION_FILE, "w", encoding="utf-8") as f:
+                json.dump({"active": False}, f)
+        return {"status": "dismissed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/schedule/escalation_alert")
+async def get_escalation_alert():
+    try:
+        if ESCALATION_FILE.exists():
+            with open(ESCALATION_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {"active": False}
+    except Exception as e:
+        return {"active": False}
+
+@router.post("/schedule/escalate_alert")
+async def trigger_escalation_alert(payload: dict = Body(...)):
+    try:
+        ESCALATION_FILE.parent.mkdir(parents=True, exist_ok=True)
+        data = {
+            "active": True,
+            "item": payload.get("item"),
+            "reason": payload.get("reason", "Medication unconfirmed by patient"),
+            "time": time.strftime("%I:%M:%S %p")
+        }
+        with open(ESCALATION_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        print(f"[ESCALATION] Alert triggered for {payload.get('item', {}).get('title')}")
+        return {"status": "escalated", "data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,0 +1,19 @@
+{
+  "active": true,
+  "breached": true,
+  "distance_meters": 372968,
+  "radius_meters": 500,
+  "patient_loc": {
+    "lat": 12.886454653941188,
+    "lng": 77.449779899806,
+    "accuracy": 102.0
+  },
+  "home_loc": {
+    "lat": 15.369007,
+    "lng": 75.123657,
+    "address": "15.3687659,75.1231160",
+    "emergency_phone": "+91 98765 43210"
+  },
+  "breached_at": "03:34:13 AM",
+  "message": "Patient has crossed the 500m safe boundary! Currently 372968m away."
+}

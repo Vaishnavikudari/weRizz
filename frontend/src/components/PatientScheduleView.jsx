@@ -12,21 +12,34 @@ import {
     Volume2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getStoredSchedule, saveStoredSchedule } from '../services/scheduleStore';
+import { getStoredSchedule, saveStoredSchedule, fetchScheduleFromBackend } from '../services/scheduleStore';
 
 const PatientScheduleView = () => {
     const [schedule, setSchedule] = useState(getStoredSchedule());
     const [activeFilter, setActiveFilter] = useState('all');
     const [reassuranceMessage, setReassuranceMessage] = useState(null);
+    const [isKioskMode, setIsKioskMode] = useState(false);
 
-    // Sync on updates from Family mode
+    // Real-time two-way synchronization with Caregiver mode
     useEffect(() => {
+        fetchScheduleFromBackend().then(items => { if (items) setSchedule(items); });
+
         const handleUpdate = () => setSchedule(getStoredSchedule());
         window.addEventListener('storage_schedule_updated', handleUpdate);
         window.addEventListener('storage', handleUpdate);
+
+        const pollSchedule = async () => {
+            try {
+                const fresh = await fetchScheduleFromBackend();
+                if (fresh) setSchedule(fresh);
+            } catch (e) {}
+        };
+        const timer = setInterval(pollSchedule, 2500);
+
         return () => {
             window.removeEventListener('storage_schedule_updated', handleUpdate);
             window.removeEventListener('storage', handleUpdate);
+            clearInterval(timer);
         };
     }, []);
 
@@ -75,44 +88,79 @@ const PatientScheduleView = () => {
         day: 'numeric' 
     });
 
+    if (isKioskMode) {
+        return (
+            <div className="fixed inset-0 z-[2000] bg-[#070D1E] text-white flex flex-col items-center justify-center p-8 select-none">
+                <button
+                    onClick={() => setIsKioskMode(false)}
+                    className="absolute top-6 right-6 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-zinc-300 hover:text-white rounded-xl text-xs font-mono"
+                >
+                    ✕ Exit Bedside Clock
+                </button>
+
+                <div className="text-center max-w-2xl space-y-6">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[#FF6B5B] px-4 py-1.5 rounded-full bg-[#FF6B5B]/10 border border-[#FF6B5B]/20 inline-block">
+                        Ambient Reality Care Terminal
+                    </span>
+
+                    <h1 className="text-7xl sm:text-9xl font-mono font-extrabold text-white tracking-tight">
+                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </h1>
+
+                    <h2 
+                        className="text-2xl sm:text-4xl font-serif text-[#F4EDE0]"
+                        style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
+                    >
+                        Today is <span className="italic text-emerald-300">{todayStr}</span>
+                    </h2>
+
+                    <p className="font-handwritten text-3xl text-zinc-300 leading-relaxed pt-4">
+                        “Dad, you are in your safe home in Bangalore. Sneha and Rahul are with you.”
+                    </p>
+
+
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="w-full h-full bg-transparent text-white flex flex-col p-4 md:p-8 overflow-y-auto">
+        <div className="w-full min-h-full bg-transparent text-white px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24">
             {/* Reality Orientation Banner - The Seasons & Instrument Serif Typography */}
             <motion.div 
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="max-w-4xl w-full mx-auto mb-8 bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                className="max-w-4xl w-full mx-auto mb-8 bg-[#0B1736]/85 border border-white/15 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 flex-shrink-0"
             >
-                <div className="relative z-10">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[#F4EDE0]/70 mb-3 flex items-center gap-1.5">
-                        <Calendar size={13} className="text-[#F4EDE0]/70" /> Memory care companion • Reality orientation
+                <div className="relative z-10 flex-1 min-w-0">
+                    <span className="font-mono text-xs uppercase tracking-wider text-[#F4EDE0]/85 mb-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10">
+                        <Calendar size={13} className="text-[#FF6B5B]" /> Memory care companion • Reality orientation
                     </span>
                     <h1 
-                        className="font-serif text-3xl sm:text-4xl md:text-[44px] text-[#F4EDE0] tracking-[-0.025em] leading-[1.08] mb-3"
+                        className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#F4EDE0] tracking-tight leading-snug sm:leading-normal mb-3 pt-1"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
                         Today is <span className="italic text-[#FF6B5B]">{todayStr}</span>
                     </h1>
-                    <p className="text-[#F4EDE0]/70 text-sm sm:text-base leading-[1.6] max-w-xl">
+                    <p className="text-[#F4EDE0]/80 text-sm sm:text-base leading-relaxed max-w-xl">
                         Mavora is keeping track of your daily routine. You are safe at home with your loved ones.
                     </p>
                 </div>
 
-                <div className="flex flex-col items-center gap-2.5 flex-shrink-0 relative z-10">
-                    <div className="bg-[#070D1E]/60 border border-white/15 backdrop-blur-md px-6 py-3.5 rounded-xl text-center shadow-md w-full">
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#F4EDE0]/70">Current Time</p>
-                        <p className="text-2xl sm:text-3xl font-mono font-medium text-[#F4EDE0] mt-0.5 tracking-tight">
+                <div className="flex flex-col items-center sm:items-end gap-3 flex-shrink-0 relative z-10 w-full sm:w-auto">
+                    <div className="bg-[#070D1E]/80 border border-white/15 backdrop-blur-md px-6 py-3.5 rounded-2xl text-center shadow-md w-full sm:w-auto min-w-[170px]">
+                        <p className="font-mono text-[11px] uppercase tracking-wider text-[#F4EDE0]/70">Current Time</p>
+                        <p className="text-2xl sm:text-3xl font-mono font-medium text-[#F4EDE0] mt-1 tracking-tight">
                             {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
                     <button
-                        onClick={() => window.dispatchEvent(new CustomEvent('trigger_medication_alarm'))}
-                        className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
-                        title="Experience the dementia voice alarm right now"
+                        onClick={() => setIsKioskMode(true)}
+                        className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+                        title="Turn screen into Bedside Ambient Clock for dementia care"
                     >
-                        <Volume2 size={13} />
-                        <span>Test Voice Alarm (Demo)</span>
+                        <span>🌙 Bedside Clock Mode</span>
                     </button>
                 </div>
             </motion.div>
