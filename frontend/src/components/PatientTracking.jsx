@@ -363,7 +363,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                 <p className="font-handwritten text-xl text-zinc-300 mt-0.5">
                                     {isPatient 
                                         ? `“You are currently ${currentDistance}m from home. Please stay calm. Tap Guide Me Home below.”` 
-                                        : `Patient is currently ${currentDistance}m from Home (Safe limit: ${safeRadius}m).`}
+                                        : `Patient is currently ${currentDistance >= 1000 ? (currentDistance / 1000).toFixed(1) + ' km' : currentDistance + 'm'} from Home (Safe limit: ${safeRadius}m).`}
                                 </p>
                             </div>
                         </div>
@@ -377,7 +377,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                 </button>
                             ) : (
                                 <a 
-                                    href="tel:911"
+                                    href={`tel:${homeLocation.emergency_phone || "+919876543210"}`}
                                     className="px-5 py-2.5 bg-white text-black font-bold rounded-xl flex items-center gap-2 text-xs shadow-sm hover:bg-zinc-200"
                                 >
                                     <PhoneCall size={16} /> Call Caregiver

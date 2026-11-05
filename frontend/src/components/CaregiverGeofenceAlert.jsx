@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { AlertTriangle, MapPin, Phone, X, ExternalLink, ShieldAlert, Navigation } from 'lucide-react';
+import { ShieldAlert, MapPin, Phone, X, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
+
+// Helper to format large distance cleanly
+const formatDistance = (meters) => {
+    if (!meters || meters < 0) return '0 m';
+    if (meters >= 1000) {
+        return `${(meters / 1000).toFixed(1)} km`;
+    }
+    return `${Math.round(meters)} m`;
+};
 
 // Web Audio API emergency double-chime
 const playEmergencyBuzzer = () => {
@@ -45,7 +54,6 @@ const speakEmergencyVoice = (text) => {
 const CaregiverGeofenceAlert = ({ onViewChange }) => {
     const [geofenceAlert, setGeofenceAlert] = useState(null);
     const lastSpokenTimestampRef = useRef(null);
-    const buzzerIntervalRef = useRef(null);
 
     useEffect(() => {
         const pollGeofence = async () => {
@@ -59,23 +67,20 @@ const CaregiverGeofenceAlert = ({ onViewChange }) => {
                     if (lastSpokenTimestampRef.current !== breachId) {
                         lastSpokenTimestampRef.current = breachId;
                         playEmergencyBuzzer();
+                        const distFormatted = formatDistance(res.data.distance_meters);
                         speakEmergencyVoice(
-                            `Safety Alert: Patient has crossed the safe boundary. Currently ${res.data.distance_meters} meters from home.`
+                            `Safety Alert: Patient has crossed the safe boundary. Currently ${distFormatted} from home.`
                         );
                     }
                 } else {
                     setGeofenceAlert(null);
-                    if (buzzerIntervalRef.current) clearInterval(buzzerIntervalRef.current);
                 }
             } catch (e) {}
         };
 
         pollGeofence();
         const timer = setInterval(pollGeofence, 2000);
-        return () => {
-            clearInterval(timer);
-            if (buzzerIntervalRef.current) clearInterval(buzzerIntervalRef.current);
-        };
+        return () => clearInterval(timer);
     }, []);
 
     const handleDismiss = async () => {
@@ -98,76 +103,88 @@ const CaregiverGeofenceAlert = ({ onViewChange }) => {
     return (
         <AnimatePresence>
             <motion.div
-                initial={{ opacity: 0, y: -40, scale: 0.98 }}
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -30, scale: 0.98 }}
+                exit={{ opacity: 0, y: 30, scale: 0.95 }}
                 transition={{ duration: 0.25 }}
-                className="fixed top-20 left-1/2 -translate-x-1/2 z-[3000] w-[95%] max-w-4xl"
+                className="fixed bottom-6 right-4 sm:right-6 z-[3000] w-[calc(100%-2rem)] sm:w-[440px] max-w-[460px] pointer-events-auto"
             >
-                <div className="bg-red-950/95 border-2 border-red-500 rounded-3xl p-5 sm:p-6 shadow-[0_15px_60px_rgba(239,68,68,0.45)] backdrop-blur-2xl text-white">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        {/* Left alert content */}
-                        <div className="flex items-start gap-4">
-                            <div className="p-3.5 bg-red-600 rounded-2xl text-white flex-shrink-0 animate-bounce shadow-lg shadow-red-600/50">
-                                <ShieldAlert size={28} />
+                <div className="bg-[#12070A]/95 border-2 border-red-500/90 rounded-3xl p-5 shadow-[0_15px_60px_rgba(239,68,68,0.45)] backdrop-blur-2xl text-white">
+                    {/* Top Header Row with Icon, Tag, Time and Close Button */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 bg-red-600 rounded-xl text-white animate-pulse shadow-md shadow-red-600/40">
+                                <ShieldAlert size={18} />
                             </div>
                             <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-500 text-white">
-                                        CRITICAL SAFETY ESCALATION
-                                    </span>
-                                    <span className="font-mono text-xs text-red-300">
-                                        Breached at {geofenceAlert.breached_at || 'Just now'}
-                                    </span>
-                                </div>
-                                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                                    Patient Wandered Out of Safe Perimeter!
-                                </h3>
-                                <p className="text-xs sm:text-sm text-red-200 mt-1 max-w-xl">
-                                    Patient is currently <span className="text-white font-bold underline">{distanceMeters}m away</span> from safe zone (Allowed limit: {safeRadiusMeters}m).
-                                    Home: <span className="text-white font-medium">{homeAddress}</span>.
-                                </p>
+                                <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/40 text-red-300">
+                                    CRITICAL SAFETY ALERT
+                                </span>
+                                <span className="font-mono text-[11px] text-zinc-400 ml-2">
+                                    {geofenceAlert.breached_at || 'Just now'}
+                                </span>
                             </div>
                         </div>
+                        <button
+                            onClick={handleDismiss}
+                            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                            title="Dismiss Alert"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
 
-                        {/* Right Action buttons */}
-                        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                            {onViewChange && (
-                                <button
-                                    onClick={() => onViewChange('tracking')}
-                                    className="px-4 py-2.5 bg-white hover:bg-zinc-100 text-red-950 font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                                >
-                                    <MapPin size={15} />
-                                    <span>Live GPS Tracker</span>
-                                </button>
-                            )}
+                    {/* Title */}
+                    <h3 className="text-base font-bold text-white tracking-tight">
+                        Patient Wandered Out of Safe Zone!
+                    </h3>
 
-                            <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${patientLat},${patientLng}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-4 py-2.5 bg-red-800/80 hover:bg-red-700 border border-red-400/40 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap"
-                            >
-                                <ExternalLink size={14} />
-                                <span>Google Maps</span>
-                            </a>
-
-                            <a
-                                href={`tel:${emergencyPhone}`}
-                                className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                            >
-                                <Phone size={14} />
-                                <span>Call Patient</span>
-                            </a>
-
-                            <button
-                                onClick={handleDismiss}
-                                className="p-2.5 bg-white/10 hover:bg-white/20 text-red-200 hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer"
-                                title="Dismiss Alert"
-                            >
-                                <X size={16} />
-                            </button>
+                    {/* Distance and Location Info */}
+                    <div className="mt-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs text-zinc-200 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <span className="text-zinc-400">Current Distance:</span>
+                            <span className="font-mono font-bold text-red-400 text-sm">
+                                {formatDistance(distanceMeters)} away
+                            </span>
                         </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                            <span className="text-zinc-400">Safe Boundary:</span>
+                            <span className="font-mono text-zinc-300">{safeRadiusMeters} meters</span>
+                        </div>
+                        <div className="text-[11px] text-zinc-400 truncate pt-1 border-t border-white/10">
+                            Home: <span className="text-zinc-200">{homeAddress}</span>
+                        </div>
+                    </div>
+
+                    {/* Action Buttons in 1 clean row */}
+                    <div className="grid grid-cols-3 gap-2 mt-3.5">
+                        {onViewChange && (
+                            <button
+                                onClick={() => onViewChange('tracking')}
+                                className="py-2.5 px-2 bg-white hover:bg-zinc-100 text-red-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                            >
+                                <MapPin size={13} />
+                                <span>Live GPS</span>
+                            </button>
+                        )}
+
+                        <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${patientLat},${patientLng}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="py-2.5 px-2 bg-red-900/60 hover:bg-red-800 border border-red-500/40 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap"
+                        >
+                            <ExternalLink size={13} />
+                            <span>Maps</span>
+                        </a>
+
+                        <a
+                            href={`tel:${emergencyPhone}`}
+                            className="py-2.5 px-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                        >
+                            <Phone size={13} />
+                            <span>Call</span>
+                        </a>
                     </div>
                 </div>
             </motion.div>
@@ -176,4 +193,3 @@ const CaregiverGeofenceAlert = ({ onViewChange }) => {
 };
 
 export default CaregiverGeofenceAlert;
-

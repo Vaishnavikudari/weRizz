@@ -1,10 +1,10 @@
 {
-  "address": "15.3687659,75.1231160",
-  "landmark": "Opposite Metro Station Pillar 140",
-  "lat": 15.369007,
-  "lng": 75.123657,
+  "address": "Saved Home (12.8865, 77.4498)",
+  "landmark": "",
+  "lat": 12.886454653941188,
+  "lng": 77.449779899806,
   "radius_meters": 500,
-  "emergency_contact": "Rahul",
-  "emergency_phone": "+91 98765 43210",
-  "updated_at": "2026-11-06 02:39 AM"
+  "emergency_contact": "",
+  "emergency_phone": "",
+  "updated_at": "2026-11-06 03:37 AM"
 }

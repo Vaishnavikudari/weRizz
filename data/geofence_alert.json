@@ -1,19 +1,20 @@
 {
-  "active": true,
+  "active": false,
   "breached": true,
-  "distance_meters": 372968,
+  "distance_meters": 18390,
   "radius_meters": 500,
   "patient_loc": {
-    "lat": 12.886454653941188,
-    "lng": 77.449779899806,
-    "accuracy": 102.0
+    "lat": 12.972,
+    "lng": 77.595,
+    "accuracy": 10.0
   },
   "home_loc": {
-    "lat": 15.369007,
-    "lng": 75.123657,
-    "address": "15.3687659,75.1231160",
-    "emergency_phone": "+91 98765 43210"
+    "lat": 12.886454653941188,
+    "lng": 77.449779899806,
+    "address": "Saved Home (12.8865, 77.4498)",
+    "emergency_phone": ""
   },
-  "breached_at": "03:34:13 AM",
-  "message": "Patient has crossed the 500m safe boundary! Currently 372968m away."
+  "breached_at": "03:38:46 AM",
+  "message": "Patient has crossed the 500m safe boundary! Currently 18390m away.",
+  "resolved_at": "03:38:46 AM"
 }
