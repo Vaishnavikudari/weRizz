@@ -5,7 +5,8 @@ const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 import { 
     MapPin, 
     Navigation, 
-    ShieldCheck, 
+    ShieldCheck,
+    ShieldAlert, 
     AlertTriangle, 
     Volume2, 
     PhoneCall, 
@@ -341,14 +342,14 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                 </div>
             </div>
 
-            {/* CRITICAL WANDERING ALERT BANNER */}
+            {/* CRITICAL WANDERING ALERT BANNER - In-line in document flow, pushes content down, 0% overlapping */}
             <AnimatePresence>
                 {isWandering && !alertMuted && (
                     <motion.div 
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="max-w-6xl w-full mx-auto mb-6 bg-[#0B1736]/85 border-2 border-red-500/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4"
+                        className="max-w-6xl w-full mx-auto mb-6 bg-red-950/90 border-2 border-red-500 rounded-3xl p-5 sm:p-6 shadow-[0_15px_50px_rgba(239,68,68,0.35)] backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                     >
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-red-500/10 rounded-full text-red-400 flex-shrink-0">
@@ -378,14 +379,25 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                             ) : (
                                 <a 
                                     href={`tel:${homeLocation.emergency_phone || "+919876543210"}`}
-                                    className="px-5 py-2.5 bg-white text-black font-bold rounded-xl flex items-center gap-2 text-xs shadow-sm hover:bg-zinc-200"
+                                    className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl flex items-center gap-2 text-xs shadow-sm"
                                 >
-                                    <PhoneCall size={16} /> Call Caregiver
+                                    <PhoneCall size={16} /> Call Patient
                                 </a>
                             )}
+                            <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${patientLoc.lat},${patientLoc.lng}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-4 py-2.5 bg-red-900/60 hover:bg-red-800 border border-red-500/40 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap"
+                            >
+                                <Navigation size={14} /> Maps
+                            </a>
                             <button
-                                onClick={() => setAlertMuted(true)}
-                                className="px-3 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs rounded-xl cursor-pointer"
+                                onClick={async () => {
+                                    setAlertMuted(true);
+                                    try { await axios.post(`${API_BASE}/patient/dismiss_geofence`); } catch(e){}
+                                }}
+                                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-red-200 hover:text-white text-xs font-semibold rounded-xl cursor-pointer"
                             >
                                 Dismiss
                             </button>

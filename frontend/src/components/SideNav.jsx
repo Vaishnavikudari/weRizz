@@ -1,7 +1,23 @@
+import axios from 'axios';
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
 import React from 'react';
 import { Home, Users, Settings, MapPin, Brain, Calendar, LogOut, Compass } from 'lucide-react';
 
 const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
+    const [geofenceActive, setGeofenceActive] = React.useState(false);
+
+    React.useEffect(() => {
+        const checkAlert = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/patient/geofence_alert`);
+                setGeofenceActive(Boolean(res.data?.active && res.data?.breached));
+            } catch (e) {}
+        };
+        checkAlert();
+        const t = setInterval(checkAlert, 3000);
+        return () => clearInterval(t);
+    }, []);
+
     // Check if currently inside Patient Mode or Family Mode
     const isPatientSession = currentView === 'patient' || currentView === 'greeting' || currentView === 'patient_schedule' || currentView === 'patient_lost' || currentView === 'patient_gps';
     const isFamilySession = currentView === 'caregiver' || currentView === 'tracking';
@@ -72,11 +88,16 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
                             </button>
 
                             <button 
-                                className={`nav-item ${currentView === 'tracking' ? 'active' : ''}`} 
+                                className={`nav-item ${currentView === 'tracking' ? 'active' : ''} ${geofenceActive ? 'bg-red-500/20 text-red-200 border-red-500/40 animate-pulse' : ''}`} 
                                 onClick={() => onViewChange('tracking')}
                             >
-                                <MapPin size={16} strokeWidth={1.5} />
+                                <MapPin size={16} className={geofenceActive ? "text-red-400 animate-bounce" : ""} strokeWidth={1.5} />
                                 <span>GPS Tracker</span>
+                                {geofenceActive && (
+                                    <span className="ml-1 px-1.5 py-0.2 rounded-full bg-red-600 text-white text-[9px] font-bold">
+                                        ALERT
+                                    </span>
+                                )}
                             </button>
 
                             <button 

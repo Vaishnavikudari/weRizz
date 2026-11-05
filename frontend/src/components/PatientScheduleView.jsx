@@ -138,7 +138,7 @@ const PatientScheduleView = () => {
                         <Calendar size={13} className="text-[#FF6B5B]" /> Memory care companion • Reality orientation
                     </span>
                     <h1 
-                        className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#F4EDE0] tracking-tight leading-snug sm:leading-normal mb-3 pt-1"
+                        className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#F4EDE0] tracking-tight leading-snug sm:leading-relaxed mb-3 pt-2 pb-1"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
                         Today is <span className="italic text-[#FF6B5B]">{todayStr}</span>

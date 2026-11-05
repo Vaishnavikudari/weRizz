@@ -5,7 +5,9 @@ import axios from 'axios';
 import { 
     UserPlus, 
     Calendar, 
-    ShieldCheck, 
+    ShieldCheck,
+    ShieldAlert,
+    Phone, 
     Sparkles, 
     UploadCloud, 
     Check, 
@@ -31,7 +33,25 @@ import AudioRecorder from '../components/AudioRecorder';
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
-const CaregiverPortal = () => {
+const CaregiverPortal = ({ onNavigate }) => {
+    const [geofenceAlert, setGeofenceAlert] = useState(null);
+    // Real-time Geofence watcher
+    useEffect(() => {
+        const pollGeofence = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/patient/geofence_alert`);
+                if (res.data?.active && res.data?.breached) {
+                    setGeofenceAlert(res.data);
+                } else {
+                    setGeofenceAlert(null);
+                }
+            } catch (e) {}
+        };
+        pollGeofence();
+        const gTimer = setInterval(pollGeofence, 2500);
+        return () => clearInterval(gTimer);
+    }, []);
+
     const [activeSection, setActiveSection] = useState('enroll'); // 'enroll' | 'enrolled' | 'schedule'
     
     // People list state
@@ -303,6 +323,61 @@ const CaregiverPortal = () => {
 
     return (
         <div className="w-full min-h-full bg-transparent text-white px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24">
+            {/* Inline Geofence Breach Banner - Takes its own space, pushes content down, hides zero details */}
+            {geofenceAlert && geofenceAlert.active && (
+                <div className="max-w-6xl w-full mx-auto mb-6 bg-red-950/90 border-2 border-red-500 rounded-3xl p-5 sm:p-6 shadow-[0_15px_50px_rgba(239,68,68,0.35)] backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-pulse">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-red-600 rounded-2xl text-white flex-shrink-0 shadow-lg shadow-red-600/50">
+                            <ShieldAlert size={28} />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-red-500 text-white">
+                                    CRITICAL SAFETY ALERT
+                                </span>
+                                <span className="font-mono text-xs text-red-300">
+                                    Breached at {geofenceAlert.breached_at || 'Just now'}
+                                </span>
+                            </div>
+                            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                                Patient Wandered Out of Safe Perimeter ({geofenceAlert.distance_meters >= 1000 ? (geofenceAlert.distance_meters / 1000).toFixed(1) + ' km' : geofenceAlert.distance_meters + 'm'} away)!
+                            </h3>
+                            <p className="text-xs text-red-200 mt-0.5">
+                                Safe boundary is {geofenceAlert.radius_meters || 500}m. Home: {geofenceAlert.home_loc?.address || 'Safe Haven Home'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+                        {onNavigate && (
+                            <button
+                                onClick={() => onNavigate('tracking')}
+                                className="px-4 py-2.5 bg-white hover:bg-zinc-100 text-red-950 font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                            >
+                                <MapPin size={14} />
+                                <span>Open Live GPS Tracker</span>
+                            </button>
+                        )}
+                        <a
+                            href={`tel:${geofenceAlert.home_loc?.emergency_phone || '+919876543210'}`}
+                            className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                        >
+                            <Phone size={14} />
+                            <span>Call Patient</span>
+                        </a>
+                        <button
+                            onClick={async () => {
+                                try { await axios.post(`${API_BASE}/patient/dismiss_geofence`); } catch(e){}
+                                setGeofenceAlert(null);
+                            }}
+                            className="px-3 py-2 bg-white/10 hover:bg-white/20 text-red-200 hover:text-white rounded-xl text-xs font-semibold cursor-pointer"
+                        >
+                            Dismiss
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Top Caregiver Header */}
             <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
