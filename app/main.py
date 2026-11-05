@@ -1,8 +1,15 @@
 import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2" # Suppress TF Info/Warnings
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+if "HF_HUB_OFFLINE" not in os.environ:
+    os.environ["HF_HUB_OFFLINE"] = "0"
+if "TRANSFORMERS_OFFLINE" not in os.environ:
+    os.environ["TRANSFORMERS_OFFLINE"] = "0"
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles

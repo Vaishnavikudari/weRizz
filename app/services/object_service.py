@@ -1,12 +1,10 @@
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-from ultralytics import YOLO
 import numpy as np
 from PIL import Image
-import os
-import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input
-from tensorflow.keras.preprocessing import image as keras_image
-from tensorflow.keras.models import Model
 
 # Global model instance (lazy load)
 _embedding_model = None
@@ -14,43 +12,50 @@ _embedding_model = None
 def get_embedding_model():
     global _embedding_model
     if _embedding_model is None:
-        print("🧠 Loading MobileNetV2 for Objects...")
-        base = MobileNetV2(weights='imagenet', include_top=False, pooling='avg')
-        _embedding_model = Model(inputs=base.input, outputs=base.output)
+        print("DEBUG: Lazy loading MobileNetV2 for objects...", flush=True)
+        import tensorflow as tf
+        from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2
+        from tensorflow.keras.models import Model
+        base_model = MobileNetV2(weights='imagenet', include_top=False, pooling='avg')
+        _embedding_model = Model(inputs=base_model.input, outputs=base_model.output)
+        print("DEBUG: MobileNetV2 loaded.", flush=True)
     return _embedding_model
 
 class ObjectDetector:
     def __init__(self, model_path="yolov8n.pt"):
-        print(f"DEBUG: Loading YOLO model '{model_path}'...", flush=True)
-        self.detector = YOLO(model_path)
-        print("DEBUG: YOLO loaded.", flush=True)
-    
+        self.model_path = model_path
+        self._detector = None
+
+    def _get_detector(self):
+        if self._detector is None:
+            print(f"DEBUG: Lazy loading YOLO model '{self.model_path}'...", flush=True)
+            from ultralytics import YOLO
+            self._detector = YOLO(self.model_path)
+            print("DEBUG: YOLO loaded.", flush=True)
+        return self._detector
+
     def detect_objects(self, image_path: str):
-        """Returns YOLO detections."""
-        results = self.detector(image_path)
-        detections = []
-        for r in results:
-            for box in r.boxes:
-                detections.append({
-                    "object": self.detector.names[int(box.cls[0])],
-                    "confidence": float(box.conf[0]),
-                    "box": box.xyxy[0].tolist()
+        detector = self._get_detector()
+        results = detector(image_path)
+        detected_objects = []
+        for result in results:
+            for box in result.boxes:
+                detected_objects.append({
+                    "class": detector.names[int(box.cls)],
+                    "confidence": float(box.conf),
+                    "bbox": [float(x) for x in box.xyxy[0]]
                 })
-        return detections
+        return detected_objects
 
     def generate_embedding(self, image_path: str):
-        """Generates 1280-d embedding for the full image (or crop)."""
+        from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+        from tensorflow.keras.preprocessing import image as keras_image
         model = get_embedding_model()
-        
-        # Load and preprocess
         img = keras_image.load_img(image_path, target_size=(224, 224))
-        x = keras_image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        x = preprocess_input(x)
-        
-        # Predict
-        embedding = model.predict(x, verbose=0)
-        return embedding[0].tolist() # List of floats
+        img_array = keras_image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array = preprocess_input(img_array)
+        embedding = model.predict(img_array, verbose=0)
+        return embedding[0].tolist()
 
-# Global instance
 detector = ObjectDetector()

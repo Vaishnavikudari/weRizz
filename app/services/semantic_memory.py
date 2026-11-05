@@ -9,9 +9,7 @@ import uuid
 
 class SemanticMemoryService:
     def __init__(self):
-        # Local model, small and fast
-        print("DEBUG: Loading Sentence Transformer...", flush=True)
-        self.encoder = SentenceTransformer('all-MiniLM-L6-v2') 
+        self._encoder = None
         
         if settings.QDRANT_MODE == "local":
             from app.services.memory_service import memory_service
@@ -45,6 +43,15 @@ class SemanticMemoryService:
         except Exception as e:
             # Index might already exist
             print(f"Index creation note: {e}")
+
+    @property
+    def encoder(self):
+        if self._encoder is None:
+            print("DEBUG: Lazy loading Sentence Transformer...", flush=True)
+            from sentence_transformers import SentenceTransformer
+            self._encoder = SentenceTransformer('all-MiniLM-L6-v2')
+            print("DEBUG: Sentence Transformer loaded.", flush=True)
+        return self._encoder
 
     def clear_all(self):
         """Clears all semantic text memories."""
