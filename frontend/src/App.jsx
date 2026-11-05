@@ -1042,6 +1042,35 @@ function App() {
 
         }
 
+        @media (max-width: 1024px) {
+            .avatar-zone {
+                width: 360px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            .main-stage {
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            .avatar-zone {
+                width: 100% !important;
+                height: 185px !important;
+                flex-shrink: 0 !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            .chat-zone {
+                width: 100% !important;
+                flex: 1 !important;
+                height: calc(100% - 185px) !important;
+            }
+        }
+
       `}</style>
 
       </div>
@@ -1126,7 +1155,7 @@ function App() {
 
         {/* Full Viewport App Content Under 70px Nav */}
 
-        <main className={`relative z-10 w-full flex-1 mt-[70px] h-[calc(100vh-70px)] ${view === 'patient' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <main className={`relative z-10 w-full flex-1 mt-[60px] md:mt-[70px] h-[calc(100dvh-60px)] md:h-[calc(100vh-70px)] ${view === 'patient' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
 
 
 

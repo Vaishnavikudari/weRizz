@@ -153,7 +153,7 @@ function ChatInterface({
     return (
         <div className="flex flex-col h-full w-full bg-[#08112D] border-l border-white/10 relative">
             {/* Header with The Seasons & Instrument Serif Typography */}
-            <div className="p-3.5 px-6 border-b border-white/10 flex items-center justify-between bg-[#0B1736]/75 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 flex-shrink-0">
+            <div className="p-2.5 px-3.5 sm:p-3.5 sm:px-6 border-b border-white/10 flex items-center justify-between bg-[#0B1736]/75 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 flex-shrink-0">
                 <div className="flex items-center gap-3">
                     <Sparkles className="text-[#9b8afb]" size={16} />
                     <div className="flex flex-col">
@@ -173,7 +173,7 @@ function ChatInterface({
                 <div className="flex items-center gap-1 bg-[#070D1E]/60 border border-white/12 backdrop-blur-md p-1 rounded-xl">
                     <button
                         onClick={() => onLanguageChange && onLanguageChange('en')}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'en'
                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
@@ -184,7 +184,7 @@ function ChatInterface({
                     </button>
                     <button
                         onClick={() => onLanguageChange && onLanguageChange('kn')}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'kn'
                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
@@ -195,7 +195,7 @@ function ChatInterface({
                     </button>
                     <button
                         onClick={() => onLanguageChange && onLanguageChange('hi')}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'hi'
                                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
@@ -385,8 +385,8 @@ function ChatInterface({
                 </div>
 
                 {/* 3. Action Toolbar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
-                    <div className="flex items-center gap-1 bg-[#070D1E]/60 backdrop-blur-md p-1 rounded-xl border border-white/12 shadow-sm">
+                <div className="flex items-center justify-between gap-2 pt-0.5 overflow-x-auto noscroll">
+                    <div className="flex items-center gap-1 bg-[#070D1E]/60 backdrop-blur-md p-1 rounded-xl border border-white/12 shadow-sm flex-nowrap overflow-x-auto noscroll max-w-full">
                         <ActionButton icon={<User size={14} />} label="Scan Face" onClick={() => openCamera('person')} />
                         <ActionButton icon={<Package size={14} />} label="Scan Item" onClick={() => openCamera('object')} />
                         <div className="w-px h-4 bg-white/10 mx-0.5" />
@@ -394,7 +394,7 @@ function ChatInterface({
                         <ActionButton icon={<PackagePlus size={14} />} label="Enroll Item" onClick={onEnrollObject} />
                     </div>
 
-                    <p className="text-[11px] font-handwritten text-zinc-400 hidden sm:block">
+                    <p className="text-[11px] font-handwritten text-zinc-400 hidden lg:block flex-shrink-0">
                         Mavora Memory Companion
                     </p>
                 </div>

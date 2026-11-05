@@ -439,7 +439,7 @@ const NeuralNetworkHero = ({ onGetStarted, onLaunchFamily }) => {
                                 transition={{ duration: 0.45, delay: idx * 0.08, ease: [0.34, 1.56, 0.64, 1] }}
                                 className="p-3.5 rounded-2xl bg-[#0B1736]/85 border border-white/15 backdrop-blur-md flex items-start gap-3 text-left"
                             >
-                                <div className="w-8 h-8 rounded-xl bg-[#F4EDE0]/10 border border-[#F4EDE0]/15 flex items-center justify-center text-[#FF6B5B] flex-shrink-0">
+                                <div className="w-8 h-8 rounded-xl bg-[#F4EDE0]/10 border border-[#F4EDE0]/15 flex items-center justify-center text-[#60A5FA] flex-shrink-0">
                                     <Icon size={15} />
                                 </div>
                                 <div className="flex-1 min-w-0">

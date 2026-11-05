@@ -89,7 +89,7 @@ const KirbyAvatar = ({ isSpeaking, isProcessing }) => {
         >
             {/* Ground Shadow */}
             <div 
-                className="absolute w-52 h-10 rounded-[100%] bg-black/40 blur-md pointer-events-none transition-transform duration-100 ease-out"
+                className="absolute w-52 h-10 rounded-[100%] bg-black/40 blur-md pointer-events-none transition-transform duration-100 ease-out scale-[0.6] sm:scale-75 md:scale-100 origin-center"
                 style={{
                     bottom: '22%',
                     transform: `translateX(${bodyTranslateX * 0.6}px) scaleX(${1 - Math.abs(mouse.y) * 0.1}) scaleY(${1 + Math.abs(mouse.y) * 0.08})`
@@ -98,7 +98,7 @@ const KirbyAvatar = ({ isSpeaking, isProcessing }) => {
 
             {/* Whole Kirby Character Rig */}
             <div 
-                className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center"
+                className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center scale-[0.56] sm:scale-75 md:scale-100 origin-center transition-transform"
                 style={{
                     transformStyle: 'preserve-3d',
                     transform: `translate3d(${bodyTranslateX}px, ${bodyTranslateY}px, 0px) rotateY(${bodyRotateY}deg) rotateX(${bodyRotateX}deg)`,
@@ -327,13 +327,13 @@ const KirbyAvatar = ({ isSpeaking, isProcessing }) => {
 
 const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) => {
     return (
-        <div className="flex flex-col justify-between items-center h-full w-full bg-[#070D1E] overflow-hidden relative border-r border-white/10 select-none">
+        <div className="flex flex-col justify-between items-center h-full w-full bg-[#070D1E] overflow-hidden relative border-b md:border-b-0 md:border-r border-white/10 select-none">
             
             {/* Background subtle vignette */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.12)_0%,transparent_70%)] pointer-events-none" />
 
             {/* Avatar Stage Container */}
-            <div className="relative z-10 flex flex-col items-center justify-between h-full w-full py-6 px-4">
+            <div className="relative z-10 flex flex-col items-center justify-between h-full w-full py-2 sm:py-6 px-3 sm:px-4">
                 
                 {/* Kirby 3D Animated Avatar */}
                 <div className="flex-1 w-full flex items-center justify-center min-h-0 overflow-visible p-2">
@@ -341,7 +341,7 @@ const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) =
                 </div>
 
                 {/* Dynamic Status / Caption Area */}
-                <div className="mt-2 relative w-full flex flex-col items-center space-y-3 flex-shrink-0 min-h-[90px] justify-center">
+                <div className="mt-1 md:mt-2 relative w-full flex flex-col items-center space-y-1.5 md:space-y-3 flex-shrink-0 min-h-[36px] md:min-h-[90px] justify-center">
 
                     {/* Status Badge */}
                     {isSpeaking ? (

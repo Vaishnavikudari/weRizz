@@ -45,7 +45,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
                                 onClick={() => onViewChange('patient')}
                             >
                                 <Users size={16} strokeWidth={1.5} />
-                                <span>Voice Assistant & Chat</span>
+                                <span className="hidden sm:inline">Voice Assistant & </span><span>Chat</span>
                             </button>
 
                             <button 
@@ -53,7 +53,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
                                 onClick={() => onViewChange('patient_schedule')}
                             >
                                 <Calendar size={16} strokeWidth={1.5} />
-                                <span>My Day & Medicine</span>
+                                <span className="hidden sm:inline">My Day & </span><span>Medicine</span>
                             </button>
 
                             <button 
@@ -62,7 +62,7 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
                                 title="Patient Live GPS & Take Me Home"
                             >
                                 <Compass size={16} strokeWidth={1.5} />
-                                <span>Live GPS & Safety</span>
+                                <span className="hidden sm:inline">Live </span><span>GPS & Safety</span>
                             </button>
 
                             <button 
@@ -240,6 +240,33 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
         .exit-item:hover {
             color: #93C5FD;
             background: rgba(96, 165, 250, 0.12);
+        }
+        @media (max-width: 768px) {
+            .topnav {
+                padding: 0 12px;
+                height: 60px;
+            }
+            .brand-text {
+                font-size: 1.15rem;
+            }
+            .mode-badge {
+                display: none;
+            }
+            .nav-links {
+                gap: 4px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                max-width: calc(100vw - 110px);
+                scrollbar-width: none;
+            }
+            .nav-links::-webkit-scrollbar {
+                display: none;
+            }
+            .nav-item {
+                padding: 5px 8px;
+                font-size: 0.72rem;
+                gap: 4px;
+            }
         }
       `}</style>
         </>
