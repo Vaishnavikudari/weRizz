@@ -98,13 +98,13 @@ const PatientScheduleView = () => {
             >
                 <div className="relative z-10 flex-1 min-w-0">
                     <span className="font-mono text-xs uppercase tracking-wider text-[#F4EDE0]/85 mb-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10">
-                        <Calendar size={13} className="text-[#FF6B5B]" /> Memory care companion • Reality orientation
+                        <Calendar size={13} className="text-blue-400" /> Memory care companion • Reality orientation
                     </span>
                     <h1 
                         className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#F4EDE0] tracking-tight leading-snug sm:leading-relaxed mb-3 pt-2 pb-1"
                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                     >
-                        Today is <span className="italic text-[#FF6B5B]">{todayStr}</span>
+                        Today is <span className="italic text-blue-400">{todayStr}</span>
                     </h1>
                     <p className="text-[#F4EDE0]/80 text-sm sm:text-base leading-relaxed max-w-xl">
                         Mavora is keeping track of your daily routine. You are safe at home with your loved ones.
@@ -130,21 +130,21 @@ const PatientScheduleView = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10, scale: 0.98 }}
                         transition={{ duration: 0.2 }}
-                        className="max-w-4xl w-full mx-auto mb-6 bg-[#16161a] border border-[#FF6B5B]/40 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xl"
+                        className="max-w-4xl w-full mx-auto mb-6 bg-[#16161a] border border-blue-500/40 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-2xl"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 bg-[#9b8afb]/10 rounded-xl text-[#FF6B5B]">
+                            <div className="p-2.5 bg-[#9b8afb]/10 rounded-xl text-blue-400">
                                 <Volume2 size={20} />
                             </div>
                             <div>
-                                <p className="font-mono text-[10px] uppercase tracking-wider text-[#FF6B5B]">
+                                <p className="font-mono text-[10px] uppercase tracking-wider text-blue-400">
                                     Already Recorded
                                 </p>
                                 <p 
                                     className="font-serif text-lg text-[#F4EDE0] mt-0.5"
                                     style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                 >
-                                    <span className="italic text-[#FF6B5B]">“{reassuranceMessage}”</span>
+                                    <span className="italic text-blue-400">“{reassuranceMessage}”</span>
                                 </p>
                             </div>
                         </div>
@@ -174,7 +174,7 @@ const PatientScheduleView = () => {
                             onClick={() => setActiveFilter(tab.id)}
                             className={`px-4 py-2 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
                                 isActive 
-                                    ? 'bg-[#FF6B5B] text-white font-bold shadow-lg shadow-[#FF6B5B]/30' 
+                                    ? 'bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/30' 
                                     : 'bg-[#0B1736]/60 border border-white/15 text-white/80 hover:text-white backdrop-blur-md'
                             }`}
                         >
@@ -221,7 +221,7 @@ const PatientScheduleView = () => {
                                         {item.title}
                                     </h2>
                                     <p 
-                                        className="font-serif text-base text-[#FF6B5B] mt-0.5 italic"
+                                        className="font-serif text-base text-blue-400 mt-0.5 italic"
                                         style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                     >
                                         “{item.notes}”
@@ -234,7 +234,7 @@ const PatientScheduleView = () => {
                                 {item.completed ? (
                                     <button
                                         onClick={() => handleAlreadyTakenClick(item)}
-                                        className="w-full md:w-auto px-4 py-2 bg-[#FF6B5B]/15 hover:bg-[#FF6B5B]/25 border border-[#FF6B5B]/40 rounded-xl flex items-center justify-center gap-2 text-[#FF6B5B] font-medium text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
+                                        className="w-full md:w-auto px-4 py-2 bg-[#FF6B5B]/15 hover:bg-[#FF6B5B]/25 border border-blue-500/40 rounded-xl flex items-center justify-center gap-2 text-blue-400 font-medium text-xs transition-all active:scale-95 cursor-pointer shadow-sm"
                                     >
                                         <CheckCircle2 size={15} />
                                         <span>Taken at {item.takenAt || 'Earlier'}</span>
@@ -242,7 +242,7 @@ const PatientScheduleView = () => {
                                 ) : item.category === 'medicine' ? (
                                     <button
                                         onClick={() => handleMarkTaken(item)}
-                                        className="w-full md:w-auto px-5 py-2.5 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#FF6B5B]/30 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                                        className="w-full md:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
                                     >
                                         <CheckCircle2 size={15} />
                                         <span>Mark as Taken</span>

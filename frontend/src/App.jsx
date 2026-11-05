@@ -978,7 +978,7 @@ function App() {
 
             width: 100%;
 
-            background: #08112D;
+            background: #08112D !important;
 
             color: var(--text);
 
@@ -1002,7 +1002,7 @@ function App() {
 
             position: relative;
 
-            background: #08112D;
+            background: #08112D !important;
 
             overflow: hidden;
 
@@ -1016,7 +1016,7 @@ function App() {
 
             position: relative;
 
-            background: #08112D;
+            background: #08112D !important;
 
             flex-shrink: 0;
 
@@ -1038,7 +1038,7 @@ function App() {
 
             overflow: hidden;
 
-            background: #08112D;
+            background: #08112D !important;
 
         }
 

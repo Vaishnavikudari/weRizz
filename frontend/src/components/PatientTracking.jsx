@@ -307,9 +307,9 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                 style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                             >
                                 {isPatient ? (
-                                    <>Live location & <span className="italic text-[#FF6B5B]">safety guide</span></>
+                                    <>Live location & <span className="italic text-blue-400">safety guide</span></>
                                 ) : (
-                                    <>Family GPS & <span className="italic text-[#FF6B5B]">safety geofence</span></>
+                                    <>Family GPS & <span className="italic text-blue-400">safety geofence</span></>
                                 )}
                             </h1>
                             <p className="text-[#F4EDE0]/70 text-xs sm:text-sm mt-0.5">
@@ -504,7 +504,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                     className="font-serif text-2xl text-[#F4EDE0] mb-2"
                                     style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
                                 >
-                                    Are you feeling <span className="italic text-[#FF6B5B]">lost?</span>
+                                    Are you feeling <span className="italic text-blue-400">lost?</span>
                                 </h3>
                                 <p className="text-[#F4EDE0]/70 text-sm leading-[1.6]">
                                     Don't worry. Your family is aware and you are completely safe. Tap below anytime and we will walk back home together.
@@ -515,7 +515,7 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                                 {/* Crisp Apple-Style Guide Me Home Button */}
                                 <button
                                     onClick={handleGuideHome}
-                                    className="w-full py-4 bg-[#FF6B5B] hover:bg-[#ff5543] text-white font-extrabold text-base rounded-2xl shadow-lg shadow-[#FF6B5B]/30 flex items-center justify-center gap-3 transition-all transform active:scale-95 cursor-pointer"
+                                    className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center gap-3 transition-all transform active:scale-95 cursor-pointer"
                                 >
                                     <Navigation size={22} />
                                     Guide Me Home

@@ -175,7 +175,7 @@ function ChatInterface({
                         onClick={() => onLanguageChange && onLanguageChange('en')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'en'
-                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="English"
@@ -186,7 +186,7 @@ function ChatInterface({
                         onClick={() => onLanguageChange && onLanguageChange('kn')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'kn'
-                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="ಕನ್ನಡ (Kannada)"
@@ -197,7 +197,7 @@ function ChatInterface({
                         onClick={() => onLanguageChange && onLanguageChange('hi')}
                         className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                             activeLanguage === 'hi'
-                                ? 'bg-[#FF6B5B] text-white shadow-lg shadow-[#FF6B5B]/30 font-bold'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
                                 : 'text-[#8d8d92] hover:text-[#f4f4f2]'
                         }`}
                         title="हिन्दी (Hindi)"
@@ -334,7 +334,7 @@ function ChatInterface({
             </div>
 
             {/* Input Footer - Minimal Black */}
-            <div className="p-3 md:px-5 md:py-3.5 bg-[#0B1736]/95 backdrop-blur-xl border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
+            <div className="p-3 md:px-5 md:py-3.5 bg-[#0B1736]/75 backdrop-blur-xl border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
                 {/* 1. Suggestions Row */}
                 {suggestions.length > 0 && !showCamera && (
                     <div className="flex gap-2 overflow-x-auto pb-1 noscroll scroll-smooth">
@@ -351,7 +351,7 @@ function ChatInterface({
                 )}
 
                 {/* 2. Text & Voice Input Bar */}
-                <div className="flex items-center gap-2 bg-[#070D1E]/60 rounded-2xl p-1.5 px-3 border border-white/15 focus-within:border-[#FF6B5B]/60 backdrop-blur-md transition-all shadow-md">
+                <div className="flex items-center gap-2 bg-[#070D1E]/60 rounded-2xl p-1.5 px-3 border border-white/15 focus-within:border-blue-500/60 backdrop-blur-md transition-all shadow-md">
                     <input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -378,7 +378,7 @@ function ChatInterface({
                     <button
                         onClick={handleSend}
                         disabled={!input.trim()}
-                        className="p-2 bg-[#FF6B5B] hover:bg-[#ff5543] text-white rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer shadow-md shadow-[#FF6B5B]/30"
+                        className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer shadow-md shadow-blue-500/30"
                     >
                         <Send size={16} />
                     </button>
