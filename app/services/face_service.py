@@ -13,8 +13,19 @@ import numpy as np
 class FaceService:
     def __init__(self, model_name="Facenet512"):
         print("DEBUG: Loading OpenCV and Keras-Facenet...", flush=True)
-        # Load Haar Cascade
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        # Load Haar Cascade safely with robust fallback
+        self.face_cascade = None
+        try:
+            if hasattr(cv2, 'CascadeClassifier') and hasattr(cv2, 'data') and hasattr(cv2.data, 'haarcascades'):
+                cascade_path = os.path.join(cv2.data.haarcascades, 'haarcascade_frontalface_default.xml')
+                if os.path.exists(cascade_path):
+                    self.face_cascade = cv2.CascadeClassifier(cascade_path)
+            elif hasattr(cv2, 'CascadeClassifier'):
+                self.face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        except Exception as ce:
+            print(f"DEBUG: Haar cascade load warning (will use center crop fallback): {ce}", flush=True)
+            self.face_cascade = None
+
         cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".keras-facenet")
         self.embedder = FaceNet(cache_folder=cache_dir)
         self.model_name = model_name
@@ -31,8 +42,14 @@ class FaceService:
             img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
             gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
             
-            # Detect faces with Haar Cascade
-            faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(60, 60))
+            # Detect faces with Haar Cascade if loaded
+            faces = ()
+            if self.face_cascade is not None:
+                try:
+                    faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(60, 60))
+                except Exception as de:
+                    print(f"DEBUG: Haar detection error: {de}", flush=True)
+                    faces = ()
             
             if len(faces) == 0:
                 print(f"No face detected by Haar cascade in {image_path}, using center crop...")

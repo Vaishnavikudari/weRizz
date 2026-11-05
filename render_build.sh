@@ -4,6 +4,7 @@ set -o errexit
 
 echo "🚀 [1/3] Upgrading pip and installing Python dependencies..."
 python -m pip install --upgrade pip
+python -m pip uninstall -y opencv-python opencv-contrib-python || true
 python -m pip install -r requirements.txt
 
 echo "⚛️ [2/3] Installing frontend dependencies and building production assets..."

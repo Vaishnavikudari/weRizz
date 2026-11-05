@@ -14,8 +14,8 @@ sentence-transformers
 edge-tts
 pygame
 openai-whisper
+opencv-python-headless>=4.8.0
 ultralytics
-opencv-python-headless
 keras_facenet
 tensorflow-cpu
 tf-keras
