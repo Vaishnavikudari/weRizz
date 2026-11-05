@@ -174,7 +174,7 @@ const EnrolledMemoryBankView = ({ onBack, onEnrollNew, onSpeakText }) => {
                     {onEnrollNew && (
                         <button
                             onClick={onEnrollNew}
-                            className="px-3 py-1.5 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                            className="px-3 py-1.5 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] font-semibold rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
                         >
                             <UserPlus size={14} />
                             <span>Enroll New</span>
@@ -248,7 +248,7 @@ const EnrolledMemoryBankView = ({ onBack, onEnrollNew, onSpeakText }) => {
                         {onEnrollNew && !searchQuery && (
                             <button
                                 onClick={onEnrollNew}
-                                className="px-4 py-2 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer mt-2"
+                                className="px-4 py-2 bg-[#f4f4f2] hover:bg-[#e2e2e0] text-[#0b0b0c] font-semibold rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer mt-2"
                             >
                                 <UserPlus size={14} />
                                 <span>Enroll First Person</span>

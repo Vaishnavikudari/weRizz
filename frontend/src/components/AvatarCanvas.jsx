@@ -350,13 +350,13 @@ const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) =
                             <span className="text-emerald-300 text-[11px] font-mono tracking-wider uppercase">Speaking</span>
                         </div>
                     ) : isProcessing ? (
-                        <div className="px-3.5 py-1 bg-[#141415] border border-[#9b8afb]/30 rounded-full flex items-center gap-2">
+                        <div className="px-3.5 py-1 bg-[#141415] border border-white/20 rounded-full flex items-center gap-2">
                             <div className="flex gap-1">
-                                <span className="w-1 h-1 bg-[#9b8afb] rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                <span className="w-1 h-1 bg-[#9b8afb] rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                <span className="w-1 h-1 bg-[#9b8afb] rounded-full animate-bounce" />
+                                <span className="w-1 h-1 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                <span className="w-1 h-1 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                <span className="w-1 h-1 bg-white rounded-full animate-bounce" />
                             </div>
-                            <span className="text-[#9b8afb] text-[11px] font-mono tracking-wider uppercase ml-1">
+                            <span className="text-zinc-300 text-[11px] font-mono tracking-wider uppercase ml-1">
                                 {processingStatus || "Thinking"}
                             </span>
                         </div>

@@ -456,7 +456,7 @@ const CaregiverPortal = () => {
                                 ) : (
                                     <button
                                         onClick={() => setActiveSection('enroll')}
-                                        className="px-5 py-2.5 bg-white hover:bg-zinc-200 text-black text-white text-xs font-bold rounded-xl shadow-lg shadow-violet-600/30 inline-flex items-center gap-2"
+                                        className="px-5 py-2.5 bg-white hover:bg-zinc-200 text-black font-semibold text-xs font-bold rounded-xl shadow-sm inline-flex items-center gap-2"
                                     >
                                         <UserPlus size={15} /> Enroll First Loved One
                                     </button>
@@ -720,7 +720,7 @@ const CaregiverPortal = () => {
                                 <button
                                     type="submit"
                                     disabled={status === 'submitting'}
-                                    className="px-8 py-3 bg-white hover:bg-zinc-200 text-black font-bold text-xs rounded-xl shadow-lg shadow-violet-600/30 transition-all disabled:opacity-50"
+                                    className="px-8 py-3 bg-white hover:bg-zinc-200 text-black font-bold text-xs rounded-xl shadow-sm transition-all disabled:opacity-50"
                                 >
                                     {status === 'submitting' ? 'Generating Face Vectors...' : 'Save Person to Memory'}
                                 </button>
@@ -1012,7 +1012,7 @@ const CaregiverPortal = () => {
                                 <button
                                     type="submit"
                                     disabled={updating}
-                                    className="px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black text-white text-xs font-bold transition-all shadow-lg shadow-violet-600/30 flex items-center gap-2 disabled:opacity-50"
+                                    className="px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-semibold text-xs font-bold transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
                                 >
                                     {updating ? (
                                         <>
