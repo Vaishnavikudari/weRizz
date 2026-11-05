@@ -131,12 +131,12 @@ body {
     radial-gradient(ellipse 40% 36% at 20% 54%, rgba(255, 255, 255, 0.42) 0%, rgba(219, 234, 254, 0.20) 42%, transparent 70%),
     
     /* 2. Soft Warm Coral Glow nestled in the cloud (from Tidewell photo) */
-    radial-gradient(circle at 62% 48%, rgba(255, 107, 91, 0.58) 0%, rgba(255, 107, 91, 0.28) 32%, rgba(255, 107, 91, 0.09) 55%, transparent 72%),
-    radial-gradient(ellipse 44% 34% at 75% 52%, rgba(255, 128, 115, 0.32) 0%, rgba(255, 107, 91, 0.14) 42%, transparent 70%),
+    radial-gradient(circle at 62% 48%, rgba(59, 130, 246, 0.35) 0%, rgba(37, 99, 235, 0.18) 32%, rgba(29, 78, 216, 0.05) 55%, transparent 72%),
+    radial-gradient(ellipse 44% 34% at 75% 52%, rgba(96, 165, 250, 0.22) 0%, rgba(59, 130, 246, 0.10) 42%, transparent 70%),
     
     /* 3. Soft Upper & Lower Cloud Feathering */
-    radial-gradient(ellipse 46% 32% at 48% 34%, rgba(255, 255, 255, 0.44) 0%, rgba(255, 200, 190, 0.18) 35%, transparent 70%),
-    radial-gradient(ellipse 50% 34% at 52% 66%, rgba(240, 248, 255, 0.34) 0%, rgba(255, 107, 91, 0.16) 40%, transparent 70%);
+    radial-gradient(ellipse 46% 32% at 48% 34%, rgba(255, 255, 255, 0.44) 0%, rgba(219, 234, 254, 0.15) 35%, transparent 70%),
+    radial-gradient(ellipse 50% 34% at 52% 66%, rgba(240, 248, 255, 0.34) 0%, rgba(59, 130, 246, 0.12) 40%, transparent 70%);
 }
 
 .continuous-cloud-lower {
@@ -152,10 +152,10 @@ body {
   filter: blur(56px);
   background: 
     /* Warm Coral & White in lower drifting stream */
-    radial-gradient(circle at 44% 48%, rgba(255, 107, 91, 0.50) 0%, rgba(255, 107, 91, 0.24) 34%, transparent 70%),
+    radial-gradient(circle at 44% 48%, rgba(59, 130, 246, 0.30) 0%, rgba(37, 99, 235, 0.15) 34%, transparent 70%),
     radial-gradient(ellipse 54% 42% at 68% 46%, rgba(255, 255, 255, 0.46) 0%, rgba(240, 248, 255, 0.24) 38%, transparent 72%),
     radial-gradient(ellipse 46% 36% at 26% 54%, rgba(255, 255, 255, 0.38) 0%, rgba(219, 234, 254, 0.18) 42%, transparent 70%),
-    radial-gradient(ellipse 48% 32% at 55% 62%, rgba(255, 128, 115, 0.28) 0%, rgba(255, 107, 91, 0.12) 42%, transparent 70%);
+    radial-gradient(ellipse 48% 32% at 55% 62%, rgba(96, 165, 250, 0.22) 0%, rgba(59, 130, 246, 0.08) 42%, transparent 70%);
 }
 
 /* Staggered seamless instances for an infinite unbroken stream */

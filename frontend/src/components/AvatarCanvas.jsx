@@ -327,10 +327,10 @@ const KirbyAvatar = ({ isSpeaking, isProcessing }) => {
 
 const AvatarCanvas = ({ isSpeaking, isProcessing, message, processingStatus }) => {
     return (
-        <div className="flex flex-col justify-between items-center h-full w-full bg-transparent overflow-hidden relative border-r border-white/10 select-none">
+        <div className="flex flex-col justify-between items-center h-full w-full bg-[#070D1E] overflow-hidden relative border-r border-white/10 select-none">
             
             {/* Background subtle vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,107,91,0.12)_0%,transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.12)_0%,transparent_70%)] pointer-events-none" />
 
             {/* Avatar Stage Container */}
             <div className="relative z-10 flex flex-col items-center justify-between h-full w-full py-6 px-4">

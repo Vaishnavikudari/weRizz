@@ -151,7 +151,7 @@ function ChatInterface({
     };
 
     return (
-        <div className="flex flex-col h-full w-full bg-transparent border-l border-white/10 relative">
+        <div className="flex flex-col h-full w-full bg-[#08112D] border-l border-white/10 relative">
             {/* Header with The Seasons & Instrument Serif Typography */}
             <div className="p-3.5 px-6 border-b border-white/10 flex items-center justify-between bg-[#0B1736]/75 backdrop-blur-xl border-b border-white/10 sticky top-0 z-10 flex-shrink-0">
                 <div className="flex items-center gap-3">
@@ -334,7 +334,7 @@ function ChatInterface({
             </div>
 
             {/* Input Footer - Minimal Black */}
-            <div className="p-3 md:px-5 md:py-3.5 bg-[#0B1736]/75 backdrop-blur-xl border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
+            <div className="p-3 md:px-5 md:py-3.5 bg-[#0B1736]/95 backdrop-blur-xl border-t border-white/10 space-y-2.5 z-20 flex-shrink-0">
                 {/* 1. Suggestions Row */}
                 {suggestions.length > 0 && !showCamera && (
                     <div className="flex gap-2 overflow-x-auto pb-1 noscroll scroll-smooth">
