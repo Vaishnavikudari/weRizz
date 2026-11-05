@@ -11,6 +11,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/React-19.2-black?style=flat-square&logo=react" alt="React 19" />
   <img src="https://img.shields.io/badge/FastAPI-0.100+-black?style=flat-square&logo=fastapi" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/ElevenLabs-Voice_AI-black?style=flat-square" alt="ElevenLabs" />
   <img src="https://img.shields.io/badge/Qdrant-Vector_Database-black?style=flat-square&logo=qdrant" alt="Qdrant" />
   <img src="https://img.shields.io/badge/Edge_TTS-Neural_Voices-black?style=flat-square" alt="Edge TTS" />
   <img src="https://img.shields.io/badge/Tailwind-CSS-black?style=flat-square&logo=tailwind-css" alt="Tailwind CSS" />
@@ -34,12 +35,13 @@ By combining real-time computer vision, vector similarity search, neural text-to
 * **Object Identification**: Helps patients locate everyday essentials like keys, eyeglasses, pillboxes, and walking sticks.
 * **Familiar Voice Reassurance**: Caregivers can record personal audio greetings (*"Hello Dad, it's Rahul. You are safe at home."*) that whisper to the patient whenever disorientation or anxiety is detected.
 
-### 🗣️ 2. Native Multilingual Support
+### 🗣️ 2. Empathetic Voice AI & Multilingual Support
+* **ElevenLabs Lifelike Voice Synthesis**: Mavora integrates ElevenLabs (`eleven_turbo_v2_5`) to provide remarkably warm, empathetic, and human-sounding vocal responses, giving patients comforting voice companionship during moments of memory confusion or disorientation.
 * Fluid conversational understanding in **English**, **ಕನ್ನಡ (Kannada)**, and **हिन्दी (Hindi)**.
-* High-definition Microsoft Edge neural voices:
+* High-definition Microsoft Edge neural voices for regional languages:
   * **Kannada**: `kn-IN-SapnaNeural`
   * **Hindi**: `hi-IN-SwaraNeural`
-  * **English**: `en-IN-NeerjaNeural`
+  * **English**: `en-IN-NeerjaNeural` (or ElevenLabs Rachel)
 * Automatic script detection and phonetically accurate voice responses.
 
 ### 🗺️ 3. Safety Geofencing & Live GPS Navigation
@@ -68,7 +70,7 @@ By combining real-time computer vision, vector similarity search, neural text-to
 * **Backend**: FastAPI (Python 3.10+), Uvicorn, WebSockets.
 * **Vector Database**: Qdrant (Cloud / Local vector search for facial and object embeddings).
 * **LLM & Inference**: LLaMA 3 via Groq high-speed inference engine.
-* **Text-to-Speech**: Microsoft Edge Neural TTS (`edge-tts`).
+* **Text-to-Speech**: ElevenLabs (`eleven_turbo_v2_5`) for natural human-like voice synthesis, backed by Microsoft Edge Neural TTS (`edge-tts`) for regional Indian language synthesis.
 * **Computer Vision**: OpenCV, FaceNet embeddings, YOLO object detection.
 
 ---
@@ -117,6 +119,9 @@ QDRANT_API_KEY=your_qdrant_api_key
 
 # Groq Cloud API
 GROQ_API_KEY=gsk_your_groq_api_key_here
+
+# ElevenLabs Voice AI (Optional for ultra-realistic speech)
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
 ```
 
 ### 5. Run the Application
