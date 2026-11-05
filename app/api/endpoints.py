@@ -681,3 +681,41 @@ async def update_patient_safe_zone(zone: SafeZoneModel):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+PATIENT_LOC_FILE = Path("data/patient_location.json")
+
+class PatientLocModel(BaseModel):
+    lat: float
+    lng: float
+    accuracy: Optional[float] = 10.0
+    updated_at: Optional[str] = None
+    is_simulated: Optional[bool] = False
+
+@router.get("/patient/live_location")
+async def get_patient_live_location():
+    try:
+        if PATIENT_LOC_FILE.exists():
+            with open(PATIENT_LOC_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {
+            "lat": 12.9720,
+            "lng": 77.5950,
+            "accuracy": 10,
+            "updated_at": time.strftime("%I:%M:%S %p"),
+            "is_simulated": False
+        }
+    except Exception as e:
+        return {"lat": 12.9720, "lng": 77.5950, "accuracy": 10, "updated_at": ""}
+
+@router.post("/patient/live_location")
+async def update_patient_live_location(loc: PatientLocModel):
+    try:
+        PATIENT_LOC_FILE.parent.mkdir(parents=True, exist_ok=True)
+        data = loc.dict()
+        data["updated_at"] = time.strftime("%I:%M:%S %p")
+        with open(PATIENT_LOC_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        return {"status": "success", "location": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

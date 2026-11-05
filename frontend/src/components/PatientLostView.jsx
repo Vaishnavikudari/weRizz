@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 import { ShieldCheck, Phone, Navigation, Home, Volume2, ArrowLeft, Heart, MapPin, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -16,10 +19,33 @@ const PatientLostView = ({ onSpeakText, onBack }) => {
     useEffect(() => {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(
-                (pos) => setPatientLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                (pos) => {
+                    const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                    setPatientLoc(loc);
+                    axios.post(`${API_BASE}/patient/live_location`, {
+                        lat: loc.lat,
+                        lng: loc.lng,
+                        accuracy: Math.round(pos.coords.accuracy || 10)
+                    }).catch(() => {});
+                },
                 (err) => console.log("GPS err:", err)
             );
         }
+
+        // Live backend sync for Safe Haven Home address set by family member on Laptop B
+        const fetchSafeZone = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/patient/safe_zone`);
+                if (res.data && res.data.address) {
+                    setHomeLocation(res.data);
+                    localStorage.setItem('mavora_home_loc', JSON.stringify(res.data));
+                }
+            } catch (err) {}
+        };
+
+        fetchSafeZone();
+        const interval = setInterval(fetchSafeZone, 3000);
+        return () => clearInterval(interval);
     }, []);
 
     const calmingMessage = "Please take a deep breath. You are completely safe. Your family has been notified and knows your exact location. Stay right where you are or follow the walking directions home.";

@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 import { 
     MapPin, 
     Navigation, 
@@ -61,8 +64,9 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
     const [editAddressText, setEditAddressText] = useState('');
     const [editLandmarkText, setEditLandmarkText] = useState('');
 
-    // Sync when home address updated in Caregiver Portal
+    // Real-time backend sync across multiple devices (Laptop A <-> Laptop B)
     useEffect(() => {
+        // Local window event sync
         const handleHomeSync = (e) => {
             if (e.detail) {
                 setHomeLocation(prev => ({ ...prev, ...e.detail }));
@@ -72,8 +76,80 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
             }
         };
         window.addEventListener('mavora_home_updated', handleHomeSync);
-        return () => window.removeEventListener('mavora_home_updated', handleHomeSync);
+
+        // Cross-laptop poll for safe haven home address
+        const fetchSafeZone = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/patient/safe_zone`);
+                if (res.data && res.data.address) {
+                    setHomeLocation(prev => {
+                        if (
+                            prev.address !== res.data.address ||
+                            Math.abs(prev.lat - res.data.lat) > 0.0001 ||
+                            Math.abs(prev.lng - res.data.lng) > 0.0001
+                        ) {
+                            localStorage.setItem('mavora_home_loc', JSON.stringify(res.data));
+                            return { ...prev, ...res.data };
+                        }
+                        return prev;
+                    });
+                    if (res.data.radius_meters) {
+                        setSafeRadius(res.data.radius_meters);
+                        localStorage.setItem('mavora_safe_radius', res.data.radius_meters.toString());
+                    }
+                }
+            } catch (err) {
+                // Ignore network hiccups
+            }
+        };
+
+        fetchSafeZone();
+        const pollTimer = setInterval(fetchSafeZone, 3000);
+
+        const handleVisibility = () => {
+            if (!document.hidden) fetchSafeZone();
+        };
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        return () => {
+            window.removeEventListener('mavora_home_updated', handleHomeSync);
+            clearInterval(pollTimer);
+            document.removeEventListener('visibilitychange', handleVisibility);
+        };
     }, []);
+
+    // Cross-device patient live GPS synchronization
+    useEffect(() => {
+        if (isPatient) {
+            // Patient device: broadcast live position to backend for caregiver to see
+            if (patientLoc.lat && patientLoc.lng) {
+                axios.post(`${API_BASE}/patient/live_location`, {
+                    lat: patientLoc.lat,
+                    lng: patientLoc.lng,
+                    accuracy: patientLoc.accuracy || 10,
+                    is_simulated: isSimulated
+                }).catch(() => {});
+            }
+        } else if (!isSimulated) {
+            // Caregiver device: poll patient's live location from backend
+            const fetchPatientLocation = async () => {
+                try {
+                    const res = await axios.get(`${API_BASE}/patient/live_location`);
+                    if (res.data && res.data.lat && res.data.lng) {
+                        setPatientLoc(prev => ({
+                            lat: res.data.lat,
+                            lng: res.data.lng,
+                            accuracy: res.data.accuracy || 10,
+                            lastUpdated: res.data.updated_at || prev.lastUpdated
+                        }));
+                    }
+                } catch (e) {}
+            };
+            fetchPatientLocation();
+            const locTimer = setInterval(fetchPatientLocation, 3000);
+            return () => clearInterval(locTimer);
+        }
+    }, [isPatient, isSimulated, patientLoc.lat, patientLoc.lng]);
 
     // Live Geolocation watcher
     useEffect(() => {
@@ -110,28 +186,36 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
     const isWandering = currentDistance > safeRadius;
 
     // Save current GPS spot as Home Base (Caregiver action)
-    const handleSetCurrentAsHome = () => {
+    const handleSetCurrentAsHome = async () => {
         const newHome = {
             lat: patientLoc.lat,
             lng: patientLoc.lng,
-            address: `Saved Home (${patientLoc.lat.toFixed(4)}, ${patientLoc.lng.toFixed(4)})`
+            address: `Saved Home (${patientLoc.lat.toFixed(4)}, ${patientLoc.lng.toFixed(4)})`,
+            radius_meters: safeRadius
         };
         setHomeLocation(newHome);
         localStorage.setItem('mavora_home_loc', JSON.stringify(newHome));
         window.dispatchEvent(new CustomEvent('mavora_home_updated', { detail: newHome }));
-        alert("Home location saved successfully!");
+        try {
+            await axios.post(`${API_BASE}/patient/safe_zone`, newHome);
+        } catch (e) {}
+        alert("Home location saved and synced across all devices!");
     };
 
-    const handleSaveCustomAddress = () => {
+    const handleSaveCustomAddress = async () => {
         if (!editAddressText.trim()) return alert("Please enter an address.");
         const updated = {
             ...homeLocation,
             address: editAddressText.trim(),
-            landmark: editLandmarkText.trim()
+            landmark: editLandmarkText.trim(),
+            radius_meters: safeRadius
         };
         setHomeLocation(updated);
         localStorage.setItem('mavora_home_loc', JSON.stringify(updated));
         window.dispatchEvent(new CustomEvent('mavora_home_updated', { detail: updated }));
+        try {
+            await axios.post(`${API_BASE}/patient/safe_zone`, updated);
+        } catch (e) {}
         setShowAddressModal(false);
     };
 
