@@ -29,18 +29,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getStoredSchedule, saveStoredSchedule, fetchScheduleFromBackend } from '../services/scheduleStore';
 
 const CaregiverScheduleManager = () => {
-    const handleSimulateGeofenceBreach = async () => {
-        try {
-            await axios.post(`${API_BASE}/patient/simulate_geofence_breach`, {
-                distance_meters: 850,
-                radius_meters: 500
-            });
-            setTriggerFeedback("🚨 Simulated Wandering Breach Triggered! (Patient 850m outside home)");
-            setTimeout(() => setTriggerFeedback(null), 5000);
-        } catch (e) {
-            alert("Failed to simulate breach: " + e.message);
-        }
-    };
+
 
     const [schedule, setSchedule] = useState(getStoredSchedule());
     const [escalationAlert, setEscalationAlert] = useState(null);
@@ -318,14 +307,7 @@ const CaregiverScheduleManager = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={handleSimulateGeofenceBreach}
-                        className="px-3.5 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm"
-                        title="Simulate patient wandering 850m outside safe boundary"
-                    >
-                        <ShieldAlert size={14} />
-                        <span>Simulate Geofence Alert</span>
-                    </button>
+
 
                     <button
                         onClick={() => handleTriggerTestAlarm(schedule.find(s => s.category === 'medicine'))}
