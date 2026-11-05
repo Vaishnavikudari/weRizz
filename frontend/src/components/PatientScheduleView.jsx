@@ -99,11 +99,21 @@ const PatientScheduleView = () => {
                     </p>
                 </div>
 
-                <div className="bg-[#070D1E]/60 border border-white/15 backdrop-blur-md px-6 py-4 rounded-xl text-center shadow-md flex-shrink-0 relative z-10">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-[#F4EDE0]/70">Current Time</p>
-                    <p className="text-2xl sm:text-3xl font-mono font-medium text-[#F4EDE0] mt-0.5 tracking-tight">
-                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+                <div className="flex flex-col items-center gap-2.5 flex-shrink-0 relative z-10">
+                    <div className="bg-[#070D1E]/60 border border-white/15 backdrop-blur-md px-6 py-3.5 rounded-xl text-center shadow-md w-full">
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-[#F4EDE0]/70">Current Time</p>
+                        <p className="text-2xl sm:text-3xl font-mono font-medium text-[#F4EDE0] mt-0.5 tracking-tight">
+                            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => window.dispatchEvent(new CustomEvent('trigger_medication_alarm'))}
+                        className="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                        title="Experience the dementia voice alarm right now"
+                    >
+                        <Volume2 size={13} />
+                        <span>Test Voice Alarm (Demo)</span>
+                    </button>
                 </div>
             </motion.div>
 

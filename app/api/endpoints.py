@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Form, Response
+from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Form, Response, Body
 from pydantic import BaseModel
 from typing import Optional
 from app.services.face_service import face_service
@@ -717,5 +717,94 @@ async def update_patient_live_location(loc: PatientLocModel):
         with open(PATIENT_LOC_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
         return {"status": "success", "location": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+SCHEDULE_FILE = Path("data/schedule.json")
+
+DEFAULT_SERVER_SCHEDULE = [
+    {
+        "id": "sch-1",
+        "time": "07:30 AM",
+        "slot": "morning",
+        "title": "Morning Garden Walk & Tea",
+        "category": "routine",
+        "notes": "Dad loves fresh air in the balcony/garden. Keep a warm shawl ready.",
+        "completed": False
+    },
+    {
+        "id": "sch-2",
+        "time": "08:30 AM",
+        "slot": "morning",
+        "title": "Breakfast & Blood Pressure Pill (Amlodipine 5mg)",
+        "category": "medicine",
+        "notes": "Take 1 tablet with lukewarm water after eating breakfast.",
+        "voice_prompt": "Dad, it's Sneha. Time to take your morning blood pressure pill with water.",
+        "voice_sender": "Sneha (Daughter)",
+        "audioData": None,
+        "completed": False,
+        "takenAt": None,
+        "takenBy": None
+    },
+    {
+        "id": "sch-3",
+        "time": "01:00 PM",
+        "slot": "afternoon",
+        "title": "Lunch & Vitamin B12 + Omega 3",
+        "category": "medicine",
+        "notes": "Essential for neuroprotection. Take right after lunch.",
+        "voice_prompt": "Dad, remember to take your Vitamin B12 and Omega 3 after lunch.",
+        "voice_sender": "Sneha (Daughter)",
+        "audioData": None,
+        "completed": False,
+        "takenAt": None,
+        "takenBy": None
+    },
+    {
+        "id": "sch-4",
+        "time": "05:00 PM",
+        "slot": "afternoon",
+        "title": "Listen to Classical Music & Family Call",
+        "category": "routine",
+        "notes": "Calms evening sundowning agitation. Call Rahul (grandson).",
+        "completed": False
+    },
+    {
+        "id": "sch-5",
+        "time": "08:30 PM",
+        "slot": "night",
+        "title": "Dinner & Memory Care Tablet (Donepezil 10mg)",
+        "category": "medicine",
+        "notes": "Crucial Alzheimer's memory stabilization pill before sleep.",
+        "voice_prompt": "Dad, good night. Please take your memory tablet before going to bed. Love you.",
+        "voice_sender": "Sneha (Daughter)",
+        "audioData": None,
+        "completed": False,
+        "takenAt": None,
+        "takenBy": None
+    }
+]
+
+@router.get("/schedule")
+async def get_schedule():
+    try:
+        if SCHEDULE_FILE.exists():
+            with open(SCHEDULE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        SCHEDULE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(SCHEDULE_FILE, "w", encoding="utf-8") as f:
+            json.dump(DEFAULT_SERVER_SCHEDULE, f, indent=2)
+        return DEFAULT_SERVER_SCHEDULE
+    except Exception as e:
+        return DEFAULT_SERVER_SCHEDULE
+
+@router.post("/schedule")
+async def update_schedule(items: list = Body(...)):
+    try:
+        SCHEDULE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(SCHEDULE_FILE, "w", encoding="utf-8") as f:
+            json.dump(items, f, indent=2)
+        return {"status": "success", "count": len(items)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

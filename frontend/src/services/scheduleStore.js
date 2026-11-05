@@ -1,4 +1,7 @@
-// Shared Schedule & Medication Store with LocalStorage persistence
+// Shared Schedule & Medication Store with LocalStorage & Cloud Backend synchronization
+import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
 const DEFAULT_SCHEDULE = [
     {
@@ -16,10 +19,13 @@ const DEFAULT_SCHEDULE = [
         slot: "morning",
         title: "Breakfast & Blood Pressure Pill (Amlodipine 5mg)",
         category: "medicine",
-        notes: "Take 1 tablet with lukewarm water after eating idli/dosa.",
+        notes: "Take 1 tablet with lukewarm water after eating breakfast.",
+        voice_prompt: "Dad, it's Sneha. Please take your morning blood pressure pill with water.",
+        voice_sender: "Sneha (Daughter)",
+        audioData: null,
         completed: false,
         takenAt: null,
-        takenBy: null // 'patient' or 'family'
+        takenBy: null
     },
     {
         id: "sch-3",
@@ -28,6 +34,9 @@ const DEFAULT_SCHEDULE = [
         title: "Lunch & Vitamin B12 + Omega 3",
         category: "medicine",
         notes: "Essential for neuroprotection. Take right after lunch.",
+        voice_prompt: "Dad, remember to take your Vitamin B12 and Omega 3 after lunch.",
+        voice_sender: "Sneha (Daughter)",
+        audioData: null,
         completed: false,
         takenAt: null,
         takenBy: null
@@ -48,6 +57,9 @@ const DEFAULT_SCHEDULE = [
         title: "Dinner & Memory Care Tablet (Donepezil 10mg)",
         category: "medicine",
         notes: "Crucial Alzheimer's memory stabilization pill before sleep.",
+        voice_prompt: "Dad, good night. Please take your memory tablet before going to bed. Love you.",
+        voice_sender: "Sneha (Daughter)",
+        audioData: null,
         completed: false,
         takenAt: null,
         takenBy: null
@@ -63,9 +75,27 @@ export const getStoredSchedule = () => {
     return DEFAULT_SCHEDULE;
 };
 
-export const saveStoredSchedule = (schedule) => {
+export const saveStoredSchedule = async (schedule) => {
     localStorage.setItem("mavora_shared_schedule", JSON.stringify(schedule));
     // Trigger storage event for cross-tab or component sync
     window.dispatchEvent(new Event("storage_schedule_updated"));
+    try {
+        await axios.post(`${API_BASE}/schedule`, schedule);
+    } catch (e) {
+        console.warn("Backend schedule sync error:", e.message);
+    }
 };
 
+export const fetchScheduleFromBackend = async () => {
+    try {
+        const res = await axios.get(`${API_BASE}/schedule`);
+        if (Array.isArray(res.data) && res.data.length > 0) {
+            localStorage.setItem("mavora_shared_schedule", JSON.stringify(res.data));
+            window.dispatchEvent(new Event("storage_schedule_updated"));
+            return res.data;
+        }
+    } catch (e) {
+        console.warn("Backend schedule fetch error:", e.message);
+    }
+    return getStoredSchedule();
+};
