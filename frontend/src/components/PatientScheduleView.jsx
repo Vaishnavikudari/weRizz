@@ -18,7 +18,6 @@ const PatientScheduleView = () => {
     const [schedule, setSchedule] = useState(getStoredSchedule());
     const [activeFilter, setActiveFilter] = useState('all');
     const [reassuranceMessage, setReassuranceMessage] = useState(null);
-    const [isKioskMode, setIsKioskMode] = useState(false);
 
     // Real-time two-way synchronization with Caregiver mode
     useEffect(() => {
@@ -88,42 +87,6 @@ const PatientScheduleView = () => {
         day: 'numeric' 
     });
 
-    if (isKioskMode) {
-        return (
-            <div className="fixed inset-0 z-[2000] bg-[#070D1E] text-white flex flex-col items-center justify-center p-8 select-none">
-                <button
-                    onClick={() => setIsKioskMode(false)}
-                    className="absolute top-6 right-6 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/15 text-zinc-300 hover:text-white rounded-xl text-xs font-mono"
-                >
-                    ✕ Exit Bedside Clock
-                </button>
-
-                <div className="text-center max-w-2xl space-y-6">
-                    <span className="font-mono text-xs uppercase tracking-widest text-[#FF6B5B] px-4 py-1.5 rounded-full bg-[#FF6B5B]/10 border border-[#FF6B5B]/20 inline-block">
-                        Ambient Reality Care Terminal
-                    </span>
-
-                    <h1 className="text-7xl sm:text-9xl font-mono font-extrabold text-white tracking-tight">
-                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </h1>
-
-                    <h2 
-                        className="text-2xl sm:text-4xl font-serif text-[#F4EDE0]"
-                        style={{ fontFamily: '"The Seasons", "Instrument Serif", Georgia, serif' }}
-                    >
-                        Today is <span className="italic text-emerald-300">{todayStr}</span>
-                    </h2>
-
-                    <p className="font-handwritten text-3xl text-zinc-300 leading-relaxed pt-4">
-                        “Dad, you are in your safe home in Bangalore. Sneha and Rahul are with you.”
-                    </p>
-
-
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="w-full min-h-full bg-transparent text-white px-4 pt-6 pb-20 md:px-8 md:pt-8 md:pb-24">
             {/* Reality Orientation Banner - The Seasons & Instrument Serif Typography */}
@@ -155,13 +118,7 @@ const PatientScheduleView = () => {
                             {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                     </div>
-                    <button
-                        onClick={() => setIsKioskMode(true)}
-                        className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
-                        title="Turn screen into Bedside Ambient Clock for dementia care"
-                    >
-                        <span>🌙 Bedside Clock Mode</span>
-                    </button>
+
                 </div>
             </motion.div>
 
