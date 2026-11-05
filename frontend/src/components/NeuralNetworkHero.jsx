@@ -125,7 +125,7 @@ const NeuralNetworkHero = ({ onGetStarted, onLaunchFamily }) => {
                     <div 
                         className="absolute -top-24 left-1/2 -translate-x-1/2 w-[550px] h-[220px] rounded-full pointer-events-none blur-3xl opacity-60"
                         style={{
-                            background: 'radial-gradient(circle, rgba(255,107,91,0.25) 0%, rgba(255,255,255,0.18) 40%, transparent 75%)'
+                            background: 'radial-gradient(circle, rgba(37,99,235,0.25) 0%, rgba(255,255,255,0.18) 40%, transparent 75%)'
                         }}
                     />
 

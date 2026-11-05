@@ -37,7 +37,7 @@ const WeRizzIntro = ({ onComplete }) => {
             <div 
                 className="absolute w-[600px] sm:w-[850px] h-[350px] sm:h-[450px] rounded-full pointer-events-none blur-[90px] opacity-80"
                 style={{
-                    background: 'radial-gradient(ellipse at center, rgba(255, 107, 91, 0.40) 0%, rgba(37, 99, 235, 0.28) 45%, rgba(0, 0, 0, 0) 75%)'
+                    background: 'radial-gradient(ellipse at center, rgba(59, 130, 246, 0.40) 0%, rgba(37, 99, 235, 0.28) 45%, rgba(0, 0, 0, 0) 75%)'
                 }}
             />
 

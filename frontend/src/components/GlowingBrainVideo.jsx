@@ -74,7 +74,7 @@ const GlowingBrainVideo = ({ className = "" }) => {
 
             {/* 2. SOFT AMBIENT CORAL & ROYAL BACKLIGHT AURA */}
             <div 
-                className="absolute w-full max-w-xl h-56 sm:h-72 rounded-[100%] bg-[radial-gradient(ellipse_65%_65%_at_50%_50%,rgba(255,255,255,0.32)_0%,rgba(255,107,91,0.20)_35%,rgba(37,99,235,0.11)_62%,transparent_75%)] blur-3xl pointer-events-none z-0 animate-pulse"
+                className="absolute w-full max-w-xl h-56 sm:h-72 rounded-[100%] bg-[radial-gradient(ellipse_65%_65%_at_50%_50%,rgba(255,255,255,0.32)_0%,rgba(59,130,246,0.20)_35%,rgba(37,99,235,0.11)_62%,transparent_75%)] blur-3xl pointer-events-none z-0 animate-pulse"
                 style={{ animationDuration: '4.5s' }}
             />
 

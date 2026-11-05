@@ -229,7 +229,7 @@ const LandingPage = ({ onGetStarted, onLaunchPatient, onLaunchFamily }) => {
             <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none select-none flex flex-col items-center">
                 <div className="w-48 sm:w-60 h-2 bg-[#0B1736]/90 border border-white/20 rounded-full overflow-hidden backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.6)] p-[1.5px]">
                     <div 
-                        className="h-full rounded-full bg-gradient-to-r from-blue-400 via-white to-[#FF6B5B] shadow-[0_0_10px_rgba(255,107,91,0.85)] transition-all duration-100 ease-out"
+                        className="h-full rounded-full bg-gradient-to-r from-blue-400 via-white to-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.85)] transition-all duration-100 ease-out"
                         style={{ width: `${scrollPercent}%` }}
                     />
                 </div>
