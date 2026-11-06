@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Pill, Volume2, CheckCircle2, Clock, Bell, X, VolumeX, AlertCircle, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getStoredSchedule, saveStoredSchedule, fetchScheduleFromBackend } from '../services/scheduleStore';
+import { sendChromeNotification } from '../utils/browserNotifications';
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
@@ -140,6 +141,17 @@ const MedicationAlarmModal = () => {
     const triggerAlarm = (medItem) => {
         setActiveAlarm(medItem);
         playAlarmAudio(medItem);
+
+        // Native Chrome Desktop / System Notification (works even when tab/browser is minimized)
+        sendChromeNotification({
+            title: `💊 Medication Reminder: ${medItem?.title || 'Time for Medication'}`,
+            body: medItem?.voice_prompt || `Hello! It is time to take your ${medItem?.title || 'medicine'}. Please take it with a glass of water.`,
+            tag: `mavora-med-${medItem?.id || 'alarm'}`,
+            requireInteraction: true,
+            onClick: () => {
+                window.focus();
+            }
+        });
 
         // Continuous loop every 20 seconds until acknowledged
         if (loopIntervalRef.current) clearInterval(loopIntervalRef.current);

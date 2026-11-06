@@ -1,12 +1,15 @@
 import axios from 'axios';
 const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
-import React from 'react';
-import { Home, Users, Settings, MapPin, Brain, Calendar, LogOut, Compass } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Home, Users, Settings, MapPin, Brain, Calendar, LogOut, Compass, Bell, BellRing } from 'lucide-react';
+import { getNotificationPermission, requestNotificationPermission } from '../utils/browserNotifications';
 
 const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
-    const [geofenceActive, setGeofenceActive] = React.useState(false);
+    const [geofenceActive, setGeofenceActive] = useState(false);
+    const [notificationPerm, setNotificationPerm] = useState(() => getNotificationPermission());
 
-    React.useEffect(() => {
+    useEffect(() => {
+        setNotificationPerm(getNotificationPermission());
         const checkAlert = async () => {
             try {
                 const res = await axios.get(`${API_BASE}/patient/geofence_alert`);
@@ -17,6 +20,11 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
         const t = setInterval(checkAlert, 3000);
         return () => clearInterval(t);
     }, []);
+
+    const handleEnableNotifications = async () => {
+        const perm = await requestNotificationPermission();
+        setNotificationPerm(perm);
+    };
 
     // Check if currently inside Patient Mode or Family Mode
     const isPatientSession = currentView === 'patient' || currentView === 'greeting' || currentView === 'patient_schedule' || currentView === 'patient_lost' || currentView === 'patient_gps';
@@ -37,6 +45,19 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
                 </div>
 
                 <nav className="nav-links">
+                    {/* Native Chrome / Desktop Notification Pill */}
+                    {notificationPerm !== 'granted' && notificationPerm !== 'unsupported' && (
+                        <button
+                            type="button"
+                            className="nav-item notif-enable-btn"
+                            onClick={handleEnableNotifications}
+                            title="Enable Chrome system notifications for family alerts and reminders"
+                        >
+                            <Bell size={14} className="animate-bounce text-amber-300" />
+                            <span className="hidden sm:inline text-amber-200 font-semibold">Enable Chrome Alerts</span>
+                        </button>
+                    )}
+
                     {/* 1. If in Patient Mode: ONLY SHOW PATIENT SAFE PAGES */}
                     {isPatientSession && (
                         <>
@@ -178,12 +199,12 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
             text-transform: uppercase;
             letter-spacing: 0.16em;
             padding: 3px 9px;
-            border-radius: 9999px;
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: rgba(14, 28, 70, 0.65);
+            border-radius: 999px;
+            background: rgba(96, 165, 250, 0.14);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            color: #93C5FD;
+            margin-left: 6px;
         }
-        
         .nav-links {
             display: flex;
             align-items: center;
@@ -192,41 +213,51 @@ const NavBar = ({ onViewChange, currentView, onOpenVoiceSettings }) => {
         .nav-item {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            padding: 7px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            color: rgba(226, 232, 240, 0.75);
-            font-weight: 500;
-            transition: color 150ms ease-out, background-color 150ms ease-out;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.82rem;
-            border: 1px solid transparent;
+            font-weight: 500;
+            color: rgba(226, 232, 240, 0.85);
             background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
             white-space: nowrap;
         }
         .nav-item:hover {
-            background: rgba(255, 255, 255, 0.08);
             color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.10);
         }
         .nav-item.active {
-            background: rgba(255, 255, 255, 0.12);
             color: #FFFFFF;
-            border-color: rgba(255, 255, 255, 0.20);
+            background: rgba(96, 165, 250, 0.18);
+            border-color: rgba(96, 165, 250, 0.40);
+        }
+        .notif-enable-btn {
+            background: rgba(245, 158, 11, 0.15) !important;
+            border: 1px solid rgba(245, 158, 11, 0.35) !important;
+            color: #FDE68A !important;
+        }
+        .notif-enable-btn:hover {
+            background: rgba(245, 158, 11, 0.25) !important;
+            border-color: rgba(245, 158, 11, 0.6) !important;
         }
         .patient-launch {
-            background: #FFFFFF;
-            color: #070D1E;
+            background: #2563EB;
+            color: #FFFFFF;
             font-weight: 600;
-            border: 1px solid #FFFFFF;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.28);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
         }
         .patient-launch:hover {
-            background: #EEF4FF;
-            color: #070D1E;
+            background: #1D4ED8;
+            color: #FFFFFF;
         }
         .family-launch {
-            background: transparent;
-            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.04);
+            color: #E2E8F0;
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
         .family-launch:hover {

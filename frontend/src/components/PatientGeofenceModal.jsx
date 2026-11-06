@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Compass, Navigation, PhoneCall, Volume2, X, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playPatientCalmChime, speakBreachAlert } from '../utils/geofenceSound';
+import { sendChromeNotification } from '../utils/browserNotifications';
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
 
@@ -10,7 +11,8 @@ const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
  * PatientGeofenceModal:
  * Runs silently on the patient's device (phone/laptop/tablet).
  * When the caregiver triggers a wandering alert or safe boundary is breached,
- * this modal surfaces a calm, supportive overlay that helps the patient return home safely.
+ * this modal surfaces a calm, supportive overlay that helps the patient return home safely,
+ * and also fires a native Chrome system notification!
  */
 const PatientGeofenceModal = ({ onGuideHome }) => {
     const [alertData, setAlertData] = useState(null);
@@ -37,6 +39,18 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
                         const distMeters = data.distance_meters || 500;
                         const distText = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} kilometers` : `${distMeters} meters`;
                         speakBreachAlert(`Please take a deep breath. You are completely safe. You are about ${distText} from home. Tap Guide Me Home to walk back safely.`);
+
+                        // Native Chrome Desktop / System Notification
+                        sendChromeNotification({
+                            title: '🚨 Family Safety Alert: Return Home',
+                            body: `Your family sent an alert. You are approximately ${distText} from home. Tap to guide you home safely.`,
+                            tag: 'mavora-geofence-alert',
+                            requireInteraction: true,
+                            onClick: () => {
+                                window.focus();
+                                if (onGuideHome) onGuideHome();
+                            }
+                        });
                     }
                     setAlertData(data);
                 } else {
@@ -56,7 +70,7 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
             isMounted = false;
             clearInterval(pollTimer);
         };
-    }, []);
+    }, [onGuideHome]);
 
     const handleDismiss = async () => {
         setIsDismissed(true);
@@ -187,4 +201,3 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
 };
 
 export default PatientGeofenceModal;
-
