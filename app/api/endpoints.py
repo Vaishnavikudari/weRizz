@@ -751,12 +751,24 @@ async def update_patient_live_location(loc: PatientLocModel):
 
         # Update geofence breach alert status
         GEOFENCE_ALERT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        prev_snooze_until = 0
+        if GEOFENCE_ALERT_FILE.exists():
+            try:
+                with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
+                    prev_alert = json.load(gf)
+                prev_snooze_until = prev_alert.get("snoozed_until", 0)
+            except Exception:
+                pass
+
+        is_snoozed = prev_snooze_until > time.time()
+
         if dist > radius:
             geofence_data = {
-                "active": True,
+                "active": not is_snoozed,
                 "breached": True,
                 "distance_meters": dist,
                 "radius_meters": radius,
+                "snoozed_until": prev_snooze_until,
                 "patient_loc": {"lat": loc.lat, "lng": loc.lng, "accuracy": loc.accuracy},
                 "home_loc": {
                     "lat": home_lat,
@@ -769,7 +781,8 @@ async def update_patient_live_location(loc: PatientLocModel):
             }
             with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
                 json.dump(geofence_data, gf, indent=2)
-            print(f"[GEOFENCE BREACH] Patient {dist}m from home (Safe Limit: {radius}m)")
+            if not is_snoozed:
+                print(f"[GEOFENCE BREACH] Patient {dist}m from home (Safe Limit: {radius}m)")
         elif GEOFENCE_ALERT_FILE.exists():
             try:
                 with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
@@ -791,7 +804,10 @@ async def get_geofence_alert():
     try:
         if GEOFENCE_ALERT_FILE.exists():
             with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
-                return json.load(gf)
+                data = json.load(gf)
+                if data.get("snoozed_until", 0) > time.time():
+                    data["active"] = False
+                return data
         return {"active": False}
     except Exception as e:
         return {"active": False}
@@ -799,10 +815,20 @@ async def get_geofence_alert():
 @router.post("/patient/dismiss_geofence")
 async def dismiss_geofence_alert():
     try:
+        snooze_until = time.time() + 300  # 5 minutes snooze
         if GEOFENCE_ALERT_FILE.exists():
+            with open(GEOFENCE_ALERT_FILE, "r", encoding="utf-8") as gf:
+                existing = json.load(gf)
+            existing["active"] = False
+            existing["snoozed_until"] = snooze_until
+            existing["dismissed_at"] = time.strftime("%I:%M:%S %p")
             with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
-                json.dump({"active": False, "dismissed_at": time.strftime("%I:%M:%S %p")}, gf, indent=2)
-        return {"status": "dismissed"}
+                json.dump(existing, gf, indent=2)
+        else:
+            payload = {"active": False, "snoozed_until": snooze_until, "dismissed_at": time.strftime("%I:%M:%S %p")}
+            with open(GEOFENCE_ALERT_FILE, "w", encoding="utf-8") as gf:
+                json.dump(payload, gf, indent=2)
+        return {"status": "dismissed", "snooze_seconds": 300}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

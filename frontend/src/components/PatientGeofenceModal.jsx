@@ -1,22 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Compass, Navigation, PhoneCall, Volume2, X, ShieldAlert } from 'lucide-react';
+import { Compass, Navigation, PhoneCall, Volume2, X, Clock, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playPatientCalmChime, speakBreachAlert } from '../utils/geofenceSound';
 import { sendChromeNotification } from '../utils/browserNotifications';
 
 const API_BASE = import.meta.env.VITE_API_URL || "/api/v1";
+const SNOOZE_DURATION_MS = 5 * 60 * 1000; // 5 Minutes in milliseconds
 
 /**
  * PatientGeofenceModal:
  * Runs silently on the patient's device (phone/laptop/tablet).
  * When the caregiver triggers a wandering alert or safe boundary is breached,
- * this modal surfaces a calm, supportive overlay that helps the patient return home safely,
- * and also fires a native Chrome system notification!
+ * this modal surfaces a calm, supportive overlay that helps the patient return home safely.
+ * When the patient taps "I am safe right now · Dismiss", it cleanly snoozes for 5 MINUTES.
  */
 const PatientGeofenceModal = ({ onGuideHome }) => {
     const [alertData, setAlertData] = useState(null);
-    const [isDismissed, setIsDismissed] = useState(false);
+    const [isDismissed, setIsDismissed] = useState(() => {
+        try {
+            const snoozedUntil = parseInt(localStorage.getItem('mavora_geofence_snooze') || '0', 10);
+            return Date.now() < snoozedUntil;
+        } catch (e) {
+            return false;
+        }
+    });
     const lastAlertTimestampRef = useRef(null);
 
     useEffect(() => {
@@ -24,6 +32,20 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
 
         const checkAlert = async () => {
             try {
+                // If patient clicked "I am safe" within the last 5 minutes, DO NOT POP UP!
+                let isSnoozed = false;
+                try {
+                    const snoozedUntil = parseInt(localStorage.getItem('mavora_geofence_snooze') || '0', 10);
+                    if (Date.now() < snoozedUntil) {
+                        isSnoozed = true;
+                    }
+                } catch (e) {}
+
+                if (isSnoozed) {
+                    if (isMounted) setIsDismissed(true);
+                    return;
+                }
+
                 const res = await axios.get(`${API_BASE}/patient/geofence_alert`);
                 if (!isMounted) return;
 
@@ -31,10 +53,11 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
                 const isBreached = Boolean(data?.active && data?.breached);
 
                 if (isBreached) {
-                    // Only chime and speak on a fresh alert instance
+                    setIsDismissed(false);
+
+                    // Only chime, speak, and push Chrome notification on a fresh alert instance
                     if (data.breached_at !== lastAlertTimestampRef.current) {
                         lastAlertTimestampRef.current = data.breached_at;
-                        setIsDismissed(false);
                         playPatientCalmChime();
                         const distMeters = data.distance_meters || 500;
                         const distText = distMeters >= 1000 ? `${(distMeters / 1000).toFixed(1)} kilometers` : `${distMeters} meters`;
@@ -72,8 +95,16 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
         };
     }, [onGuideHome]);
 
+    // Snooze for 5 minutes when patient clicks "I am safe right now · Dismiss"
     const handleDismiss = async () => {
+        const snoozeUntil = Date.now() + SNOOZE_DURATION_MS;
+        try {
+            localStorage.setItem('mavora_geofence_snooze', snoozeUntil.toString());
+        } catch (e) {}
+
         setIsDismissed(true);
+        setAlertData(null);
+
         try {
             await axios.post(`${API_BASE}/patient/dismiss_geofence`);
         } catch (e) {}
@@ -143,7 +174,7 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
                         <button
                             onClick={handleDismiss}
                             className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-all cursor-pointer"
-                            title="Dismiss Alert"
+                            title="Dismiss & Snooze for 5 minutes"
                         >
                             <X size={16} />
                         </button>
@@ -189,9 +220,10 @@ const PatientGeofenceModal = ({ onGuideHome }) => {
 
                         <button
                             onClick={handleDismiss}
-                            className="w-full py-2.5 text-center text-xs text-white/50 hover:text-white transition-colors cursor-pointer"
+                            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-zinc-200 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/10"
                         >
-                            I am safe right now · Dismiss
+                            <Clock size={14} className="text-blue-300" />
+                            <span>I am safe right now · Snooze for 5 minutes</span>
                         </button>
                     </div>
                 </motion.div>
