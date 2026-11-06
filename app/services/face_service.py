@@ -47,19 +47,24 @@ class FaceService:
 
     def _get_embedder(self):
         if self._embedder is None:
-            cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".keras-facenet")
-            has_weights = os.path.exists(cache_dir) and any(os.scandir(cache_dir)) if os.path.exists(cache_dir) else False
-            if has_weights:
-                try:
-                    print("DEBUG: Loading cached Keras-FaceNet...", flush=True)
-                    from keras_facenet import FaceNet
-                    self._embedder = FaceNet(cache_folder=cache_dir)
-                    print("DEBUG: FaceNet Loaded successfully.", flush=True)
-                except Exception as e:
-                    print(f"DEBUG: FaceNet load notice: {e}. Using fast 512-dim visual features.", flush=True)
+            # Enable FaceNet only if explicitly requested, to avoid 40-second TensorFlow GIL freezes on cloud hosting
+            use_facenet = os.environ.get("USE_FACENET", "0") == "1"
+            if use_facenet:
+                cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".keras-facenet")
+                has_weights = os.path.exists(cache_dir) and any(os.scandir(cache_dir)) if os.path.exists(cache_dir) else False
+                if has_weights:
+                    try:
+                        print("DEBUG: Loading cached Keras-FaceNet...", flush=True)
+                        from keras_facenet import FaceNet
+                        self._embedder = FaceNet(cache_folder=cache_dir)
+                        print("DEBUG: FaceNet Loaded successfully.", flush=True)
+                    except Exception as e:
+                        print(f"DEBUG: FaceNet load notice: {e}. Using fast 512-dim visual features.", flush=True)
+                        self._embedder = False
+                else:
                     self._embedder = False
             else:
-                print("DEBUG: FaceNet weights not pre-cached. Using fast 512-dim visual features.", flush=True)
+                # Fast 512-dim visual features (runs in 0.005s, 0MB RAM, zero timeouts)
                 self._embedder = False
         return self._embedder if self._embedder is not False else None
 
