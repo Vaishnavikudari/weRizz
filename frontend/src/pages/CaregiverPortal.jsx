@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { playCaregiverBreachSound, speakBreachAlert } from '../utils/geofenceSound';
 import CaregiverScheduleManager from '../components/CaregiverScheduleManager';
 import CaregiverAddressManager from '../components/CaregiverAddressManager';
+import PatientTracking from '../components/PatientTracking';
 import axios from 'axios';
 import { 
     UserPlus, 
+    Compass, 
     Calendar, 
     ShieldCheck,
     ShieldAlert,
@@ -364,7 +366,7 @@ const CaregiverPortal = ({ onNavigate }) => {
                     <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                         {onNavigate && (
                             <button
-                                onClick={() => onNavigate('tracking')}
+                                onClick={() => setActiveSection('gps')}
                                 className="px-4 py-2.5 bg-white hover:bg-zinc-100 text-red-950 font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                             >
                                 <MapPin size={14} />
@@ -424,6 +426,16 @@ const CaregiverPortal = ({ onNavigate }) => {
 
                 {/* Sub-tab selection */}
                 <div className="flex bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl p-1.5 rounded-2xl gap-1">
+                    <button
+                        onClick={() => setActiveSection('gps')}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                            activeSection === 'gps'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-bold'
+                                : 'text-[#F4EDE0]/60 hover:text-white'
+                        }`}
+                    >
+                        <Compass size={15} /> Live GPS Tracker
+                    </button>
                     <button
                         onClick={() => setActiveSection('enroll')}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
@@ -852,6 +864,11 @@ const CaregiverPortal = ({ onNavigate }) => {
                 {/* 4. SAFE ZONE & HOME ADDRESS VIEW */}
                 {activeSection === 'address' && (
                     <CaregiverAddressManager />
+                )}
+
+                {/* 5. LIVE GPS TRACKER EMBEDDED VIEW */}
+                {activeSection === 'gps' && (
+                    <PatientTracking userRole="family" onNavigate={onNavigate} />
                 )}
             </div>
 

@@ -62,6 +62,9 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
 
     const [isSimulated, setIsSimulated] = useState(false);
     const [alertMuted, setAlertMuted] = useState(false);
+    const [mapProvider, setMapProvider] = useState('google'); // 'google' | 'satellite' | 'osm'
+    const [isMapLoading, setIsMapLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
 
     // Real-time backend sync across multiple devices (Laptop A <-> Laptop B)
@@ -118,42 +121,55 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
         };
     }, []);
 
-    // Cross-device patient live GPS synchronization
+    // 1. Patient device broadcaster: pushes coordinates to backend
     useEffect(() => {
-        if (isPatient) {
-            // Patient device: broadcast live position to backend for caregiver to see
-            if (patientLoc.lat && patientLoc.lng) {
-                axios.post(`${API_BASE}/patient/live_location`, {
-                    lat: patientLoc.lat,
-                    lng: patientLoc.lng,
-                    accuracy: patientLoc.accuracy || 10,
-                    is_simulated: isSimulated
-                }).catch(() => {});
-            }
-        } else if (!isSimulated) {
-            // Caregiver device: poll patient's live location from backend
-            const fetchPatientLocation = async () => {
-                try {
-                    const res = await axios.get(`${API_BASE}/patient/live_location`);
-                    if (res.data && res.data.lat && res.data.lng) {
-                        setPatientLoc(prev => ({
-                            lat: res.data.lat,
-                            lng: res.data.lng,
-                            accuracy: res.data.accuracy || 10,
-                            lastUpdated: res.data.updated_at || prev.lastUpdated
-                        }));
-                    }
-                } catch (e) {}
-            };
-            fetchPatientLocation();
-            const locTimer = setInterval(fetchPatientLocation, 3000);
-            return () => clearInterval(locTimer);
+        if (!isPatient) return;
+        if (patientLoc.lat && patientLoc.lng) {
+            axios.post(`${API_BASE}/patient/live_location`, {
+                lat: patientLoc.lat,
+                lng: patientLoc.lng,
+                accuracy: patientLoc.accuracy || 10,
+                is_simulated: isSimulated
+            }).catch(() => {});
         }
     }, [isPatient, isSimulated, patientLoc.lat, patientLoc.lng]);
 
-    // Live Geolocation watcher
+    // 2. Caregiver / Family poller: reads live patient location from backend
     useEffect(() => {
-        if (!('geolocation' in navigator)) return;
+        if (isPatient || isSimulated) return;
+        let isMounted = true;
+        const fetchPatientLocation = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/patient/live_location`);
+                if (isMounted && res.data && res.data.lat && res.data.lng) {
+                    setPatientLoc(prev => {
+                        if (Math.abs(prev.lat - res.data.lat) > 0.00005 || Math.abs(prev.lng - res.data.lng) > 0.00005) {
+                            return {
+                                lat: res.data.lat,
+                                lng: res.data.lng,
+                                accuracy: res.data.accuracy || 10,
+                                lastUpdated: res.data.updated_at || new Date().toLocaleTimeString()
+                            };
+                        }
+                        return prev;
+                    });
+                }
+            } catch (e) {
+                console.warn("Caregiver live GPS poll error:", e.message);
+            }
+        };
+
+        fetchPatientLocation();
+        const locTimer = setInterval(fetchPatientLocation, 3000);
+        return () => {
+            isMounted = false;
+            clearInterval(locTimer);
+        };
+    }, [isPatient, isSimulated]);
+
+    // 3. Live Geolocation watcher: ONLY runs on patient device, NEVER on caregiver device!
+    useEffect(() => {
+        if (!isPatient || !('geolocation' in navigator)) return;
 
         const watchId = navigator.geolocation.watchPosition(
             (pos) => {
@@ -167,13 +183,29 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                 }
             },
             (err) => {
-                console.log("GPS Live Watch Error:", err.message);
+                console.log("Patient GPS Watch Error:", err.message);
             },
             { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
         );
 
         return () => navigator.geolocation.clearWatch(watchId);
-    }, [isSimulated]);
+    }, [isPatient, isSimulated]);
+
+    const handleManualRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            const res = await axios.get(`${API_BASE}/patient/live_location`);
+            if (res.data && res.data.lat && res.data.lng) {
+                setPatientLoc({
+                    lat: res.data.lat,
+                    lng: res.data.lng,
+                    accuracy: res.data.accuracy || 10,
+                    lastUpdated: res.data.updated_at || new Date().toLocaleTimeString()
+                });
+            }
+        } catch (e) {}
+        setTimeout(() => setIsRefreshing(false), 500);
+    };
 
     // Calculate current distance from Home
     const currentDistance = calculateDistance(
@@ -447,27 +479,47 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                             )}
                         </div>
 
-                        {/* OpenStreetMap Iframe with clean minimalist dark filter */}
-                        <div className="relative flex-1 w-full h-[360px] bg-black">
+                        {/* Interactive Live Map with Google Maps & OpenStreetMap Support */}
+                        <div className="relative flex-1 w-full h-[380px] bg-slate-950 overflow-hidden">
+                            {/* Loading state indicator */}
+                            {isMapLoading && (
+                                <div className="absolute inset-0 bg-[#070D1E]/90 backdrop-blur-md flex flex-col items-center justify-center gap-3 z-10">
+                                    <RefreshCw size={26} className="text-[#60A5FA] animate-spin" />
+                                    <p className="text-xs text-white/80 font-mono">Loading Real-Time GPS Map...</p>
+                                </div>
+                            )}
+
+                            {/* Map Iframe */}
                             <iframe
+                                key={`${mapProvider}-${patientLoc.lat.toFixed(4)}-${patientLoc.lng.toFixed(4)}`}
                                 title="Patient Live Location Map"
                                 width="100%"
                                 height="100%"
                                 frameBorder="0"
                                 scrolling="no"
-                                src={`https://www.openstreetmap.org/export/embed.html?bbox=${patientLoc.lng - 0.005}%2C${patientLoc.lat - 0.003}%2C${patientLoc.lng + 0.005}%2C${patientLoc.lat + 0.003}&layer=mapnik&marker=${patientLoc.lat}%2C${patientLoc.lng}`}
-                                style={{ filter: 'invert(90%) hue-rotate(180deg) brightness(85%) contrast(100%)' }}
+                                onLoad={() => setIsMapLoading(false)}
+                                src={
+                                    mapProvider === 'satellite'
+                                        ? `https://maps.google.com/maps?q=${patientLoc.lat},${patientLoc.lng}&t=k&z=17&ie=UTF8&iwloc=&output=embed`
+                                        : mapProvider === 'osm'
+                                        ? `https://www.openstreetmap.org/export/embed.html?bbox=${patientLoc.lng - 0.005}%2C${patientLoc.lat - 0.003}%2C${patientLoc.lng + 0.005}%2C${patientLoc.lat + 0.003}&layer=mapnik&marker=${patientLoc.lat}%2C${patientLoc.lng}`
+                                        : `https://maps.google.com/maps?q=${patientLoc.lat},${patientLoc.lng}&z=16&ie=UTF8&iwloc=&output=embed`
+                                }
+                                style={mapProvider === 'osm' ? { filter: 'invert(90%) hue-rotate(180deg) brightness(85%) contrast(100%)' } : { border: 0 }}
                             />
 
-                            {/* Minimal Overlay Badge on Map */}
-                            <div className="absolute top-4 left-4 bg-zinc-950/90 backdrop-blur-md border border-[#F4EDE0]/15 p-3 rounded-xl shadow-xl flex items-center gap-3">
+                            {/* Floating Map Status Overlay */}
+                            <div className="absolute top-4 left-4 bg-zinc-950/90 backdrop-blur-md border border-white/20 p-3 rounded-xl shadow-xl flex items-center gap-3 z-10">
                                 <div className={`w-3 h-3 rounded-full ${isWandering ? 'bg-red-500 animate-ping' : 'bg-emerald-400 animate-pulse'}`} />
                                 <div className="text-xs">
-                                    <p className="font-semibold text-zinc-100">
-                                        {isWandering ? "Outside Safe Zone" : "Inside Safe Zone"}
+                                    <p className="font-semibold text-zinc-100 flex items-center gap-2">
+                                        <span>{isWandering ? "Outside Safe Zone" : "Inside Safe Zone"}</span>
+                                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-zinc-300">
+                                            {mapProvider === 'osm' ? 'OpenStreetMap' : mapProvider === 'satellite' ? 'Google Satellite' : 'Google Maps'}
+                                        </span>
                                     </p>
                                     <p className="text-[11px] text-zinc-400 font-mono">
-                                        {currentDistance}m from Home Base
+                                        {currentDistance >= 1000 ? `${(currentDistance / 1000).toFixed(1)} km` : `${currentDistance}m`} from Home Base
                                     </p>
                                 </div>
                             </div>
