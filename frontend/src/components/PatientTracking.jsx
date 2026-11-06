@@ -34,7 +34,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
     return Math.round(R * c);
 };
 
-const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
+const PatientTracking = ({ userRole = 'family', onBack, onSpeakText, onNavigate }) => {
     const isPatient = userRole === 'patient';
 
     // Default safe home location (persisted in localStorage)
@@ -452,92 +452,147 @@ const PatientTracking = ({ userRole = 'family', onBack, onSpeakText }) => {
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {/* Embedded Live Map Display */}
                     <div className="bg-[#0B1736]/75 border border-white/15 backdrop-blur-xl rounded-2xl overflow-hidden relative shadow-2xl min-h-[420px] flex flex-col">
-                        <div className="p-4 bg-[#070D1E]/60 border-b border-white/15 flex items-center justify-between backdrop-blur-md">
+                        <div className="p-3.5 sm:p-4 bg-[#070D1E]/60 border-b border-white/15 flex flex-wrap items-center justify-between gap-3 backdrop-blur-md">
                             <div className="flex items-center gap-2">
                                 <MapPin size={16} className={isWandering ? "text-red-400 animate-bounce" : "text-emerald-400"} />
                                 <span className="font-semibold text-xs tracking-wide uppercase font-mono text-zinc-200">
                                     {isPatient ? "Your Real-Time Location" : "Live GPS Map View"}
                                 </span>
                                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-900 border border-[#F4EDE0]/15 text-zinc-400">
-                                    Updated {patientLoc.lastUpdated}
+                                    Updated {patientLoc?.lastUpdated || 'Live'}
                                 </span>
                             </div>
 
-                            {/* Demo Simulator button: ONLY SHOWN FOR FAMILY MODE */}
-                            {!isPatient && (
+                            <div className="flex items-center gap-2">
+                                {/* Map View Provider Toggle */}
+                                <div className="flex items-center bg-black/40 p-0.5 rounded-xl border border-white/10">
+                                    <button
+                                        type="button"
+                                        onClick={() => setMapProvider('google')}
+                                        className={`px-2.5 py-1 text-[11px] rounded-lg font-mono font-medium transition-all cursor-pointer ${
+                                            mapProvider === 'google' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
+                                        }`}
+                                    >
+                                        Map
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setMapProvider('satellite')}
+                                        className={`px-2.5 py-1 text-[11px] rounded-lg font-mono font-medium transition-all cursor-pointer ${
+                                            mapProvider === 'satellite' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
+                                        }`}
+                                    >
+                                        Satellite
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setMapProvider('osm')}
+                                        className={`px-2.5 py-1 text-[11px] rounded-lg font-mono font-medium transition-all cursor-pointer ${
+                                            mapProvider === 'osm' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
+                                        }`}
+                                    >
+                                        OSM
+                                    </button>
+                                </div>
+
+                                {/* Manual Refresh Button */}
                                 <button
-                                    onClick={toggleSimulateWander}
-                                    className={`text-xs px-3 py-1.5 rounded-lg border font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                                        isSimulated 
-                                            ? 'bg-zinc-800 border-white/20 text-white' 
-                                            : 'bg-zinc-900 border-[#F4EDE0]/15 text-zinc-400 hover:text-white'
-                                    }`}
+                                    type="button"
+                                    onClick={handleManualRefresh}
+                                    title="Refresh live coordinates"
+                                    className="p-1.5 rounded-lg bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white cursor-pointer transition-all"
                                 >
-                                    <RefreshCw size={12} className={isSimulated ? "animate-spin" : ""} />
-                                    {isSimulated ? "Reset to Home" : "Simulate Wandering Away"}
+                                    <RefreshCw size={14} className={isRefreshing ? "animate-spin text-blue-400" : ""} />
                                 </button>
-                            )}
-                        </div>
 
-                        {/* Interactive Live Map with Google Maps & OpenStreetMap Support */}
-                        <div className="relative flex-1 w-full h-[380px] bg-slate-950 overflow-hidden">
-                            {/* Loading state indicator */}
-                            {isMapLoading && (
-                                <div className="absolute inset-0 bg-[#070D1E]/90 backdrop-blur-md flex flex-col items-center justify-center gap-3 z-10">
-                                    <RefreshCw size={26} className="text-[#60A5FA] animate-spin" />
-                                    <p className="text-xs text-white/80 font-mono">Loading Real-Time GPS Map...</p>
-                                </div>
-                            )}
-
-                            {/* Map Iframe */}
-                            <iframe
-                                key={`${mapProvider}-${patientLoc.lat.toFixed(4)}-${patientLoc.lng.toFixed(4)}`}
-                                title="Patient Live Location Map"
-                                width="100%"
-                                height="100%"
-                                frameBorder="0"
-                                scrolling="no"
-                                onLoad={() => setIsMapLoading(false)}
-                                src={
-                                    mapProvider === 'satellite'
-                                        ? `https://maps.google.com/maps?q=${patientLoc.lat},${patientLoc.lng}&t=k&z=17&ie=UTF8&iwloc=&output=embed`
-                                        : mapProvider === 'osm'
-                                        ? `https://www.openstreetmap.org/export/embed.html?bbox=${patientLoc.lng - 0.005}%2C${patientLoc.lat - 0.003}%2C${patientLoc.lng + 0.005}%2C${patientLoc.lat + 0.003}&layer=mapnik&marker=${patientLoc.lat}%2C${patientLoc.lng}`
-                                        : `https://maps.google.com/maps?q=${patientLoc.lat},${patientLoc.lng}&z=16&ie=UTF8&iwloc=&output=embed`
-                                }
-                                style={mapProvider === 'osm' ? { filter: 'invert(90%) hue-rotate(180deg) brightness(85%) contrast(100%)' } : { border: 0 }}
-                            />
-
-                            {/* Floating Map Status Overlay */}
-                            <div className="absolute top-4 left-4 bg-zinc-950/90 backdrop-blur-md border border-white/20 p-3 rounded-xl shadow-xl flex items-center gap-3 z-10">
-                                <div className={`w-3 h-3 rounded-full ${isWandering ? 'bg-red-500 animate-ping' : 'bg-emerald-400 animate-pulse'}`} />
-                                <div className="text-xs">
-                                    <p className="font-semibold text-zinc-100 flex items-center gap-2">
-                                        <span>{isWandering ? "Outside Safe Zone" : "Inside Safe Zone"}</span>
-                                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-zinc-300">
-                                            {mapProvider === 'osm' ? 'OpenStreetMap' : mapProvider === 'satellite' ? 'Google Satellite' : 'Google Maps'}
-                                        </span>
-                                    </p>
-                                    <p className="text-[11px] text-zinc-400 font-mono">
-                                        {currentDistance >= 1000 ? `${(currentDistance / 1000).toFixed(1)} km` : `${currentDistance}m`} from Home Base
-                                    </p>
-                                </div>
+                                {/* Demo Simulator button: ONLY SHOWN FOR FAMILY MODE */}
+                                {!isPatient && (
+                                    <button
+                                        type="button"
+                                        onClick={toggleSimulateWander}
+                                        className={`text-xs px-3 py-1.5 rounded-lg border font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                                            isSimulated 
+                                                ? 'bg-zinc-800 border-white/20 text-white' 
+                                                : 'bg-zinc-900 border-[#F4EDE0]/15 text-zinc-400 hover:text-white'
+                                        }`}
+                                    >
+                                        <RefreshCw size={12} className={isSimulated ? "animate-spin" : ""} />
+                                        {isSimulated ? "Reset to Home" : "Simulate Wandering"}
+                                    </button>
+                                )}
                             </div>
                         </div>
 
-                        {/* Map Footer Bar */}
-                        <div className="p-3 bg-[#070D1E]/60 border-t border-white/15 flex flex-wrap items-center justify-between text-[11px] text-white/70 font-mono gap-2 backdrop-blur-md">
-                            <span>Lat: {patientLoc.lat.toFixed(5)}, Lng: {patientLoc.lng.toFixed(5)}</span>
-                            <span>GPS Accuracy: ±{patientLoc.accuracy}m</span>
-                            <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${patientLoc.lat},${patientLoc.lng}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-white hover:underline flex items-center gap-1 font-semibold"
-                            >
-                                Open in Google Maps ↗
-                            </a>
-                        </div>
+                        {/* Interactive Live Map with Google Maps & OpenStreetMap Support */}
+                        {(() => {
+                            const latNum = Number(patientLoc?.lat != null ? patientLoc.lat : 12.9720);
+                            const lngNum = Number(patientLoc?.lng != null ? patientLoc.lng : 77.5950);
+                            const safeLat = isNaN(latNum) ? 12.9720 : latNum;
+                            const safeLng = isNaN(lngNum) ? 77.5950 : lngNum;
+
+                            return (
+                                <>
+                                    <div className="relative flex-1 w-full h-[380px] bg-slate-950 overflow-hidden">
+                                        {/* Loading state indicator */}
+                                        {isMapLoading && (
+                                            <div className="absolute inset-0 bg-[#070D1E]/90 backdrop-blur-md flex flex-col items-center justify-center gap-3 z-10">
+                                                <RefreshCw size={26} className="text-[#60A5FA] animate-spin" />
+                                                <p className="text-xs text-white/80 font-mono">Loading Real-Time GPS Map...</p>
+                                            </div>
+                                        )}
+
+                                        {/* Map Iframe */}
+                                        <iframe
+                                            key={`${mapProvider}-${safeLat.toFixed(4)}-${safeLng.toFixed(4)}`}
+                                            title="Patient Live Location Map"
+                                            width="100%"
+                                            height="100%"
+                                            frameBorder="0"
+                                            scrolling="no"
+                                            onLoad={() => setIsMapLoading(false)}
+                                            src={
+                                                mapProvider === 'satellite'
+                                                    ? `https://maps.google.com/maps?q=${safeLat},${safeLng}&t=k&z=17&ie=UTF8&iwloc=&output=embed`
+                                                    : mapProvider === 'osm'
+                                                    ? `https://www.openstreetmap.org/export/embed.html?bbox=${safeLng - 0.005}%2C${safeLat - 0.003}%2C${safeLng + 0.005}%2C${safeLat + 0.003}&layer=mapnik&marker=${safeLat}%2C${safeLng}`
+                                                    : `https://maps.google.com/maps?q=${safeLat},${safeLng}&z=16&ie=UTF8&iwloc=&output=embed`
+                                            }
+                                            style={mapProvider === 'osm' ? { filter: 'invert(90%) hue-rotate(180deg) brightness(85%) contrast(100%)' } : { border: 0 }}
+                                        />
+
+                                        {/* Floating Map Status Overlay */}
+                                        <div className="absolute top-4 left-4 bg-zinc-950/90 backdrop-blur-md border border-white/20 p-3 rounded-xl shadow-xl flex items-center gap-3 z-10">
+                                            <div className={`w-3 h-3 rounded-full ${isWandering ? 'bg-red-500 animate-ping' : 'bg-emerald-400 animate-pulse'}`} />
+                                            <div className="text-xs">
+                                                <p className="font-semibold text-zinc-100 flex items-center gap-2">
+                                                    <span>{isWandering ? "Outside Safe Zone" : "Inside Safe Zone"}</span>
+                                                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-white/10 text-zinc-300">
+                                                        {mapProvider === 'osm' ? 'OpenStreetMap' : mapProvider === 'satellite' ? 'Google Satellite' : 'Google Maps'}
+                                                    </span>
+                                                </p>
+                                                <p className="text-[11px] text-zinc-400 font-mono">
+                                                    {currentDistance >= 1000 ? `${(currentDistance / 1000).toFixed(1)} km` : `${currentDistance}m`} from Home Base
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Map Footer Bar */}
+                                    <div className="p-3 bg-[#070D1E]/60 border-t border-white/15 flex flex-wrap items-center justify-between text-[11px] text-white/70 font-mono gap-2 backdrop-blur-md">
+                                        <span>Lat: {safeLat.toFixed(5)}, Lng: {safeLng.toFixed(5)}</span>
+                                        <span>GPS Accuracy: ±{patientLoc?.accuracy || 10}m</span>
+                                        <a
+                                            href={`https://www.google.com/maps/search/?api=1&query=${safeLat},${safeLng}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-white hover:underline flex items-center gap-1 font-semibold"
+                                        >
+                                            Open in Google Maps ↗
+                                        </a>
+                                    </div>
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
 

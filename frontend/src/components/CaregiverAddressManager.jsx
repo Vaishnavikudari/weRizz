@@ -552,7 +552,7 @@ const CaregiverAddressManager = () => {
                                         {address}
                                     </p>
                                     <p className="text-[10px] font-mono text-white/60">
-                                        {lat.toFixed(5)}° N, {lng.toFixed(5)}° E · {radiusMeters}m Geofence
+                                        {(Number(lat) || 12.9716).toFixed(5)}° N, {(Number(lng) || 77.5946).toFixed(5)}° E · {radiusMeters}m Geofence
                                     </p>
                                 </div>
                                 <a

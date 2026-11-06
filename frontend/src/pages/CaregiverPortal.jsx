@@ -355,7 +355,11 @@ const CaregiverPortal = ({ onNavigate }) => {
                                 </span>
                             </div>
                             <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                                Patient Wandered Out of Safe Perimeter ({geofenceAlert.distance_meters >= 1000 ? (geofenceAlert.distance_meters / 1000).toFixed(1) + ' km' : geofenceAlert.distance_meters + 'm'} away)!
+                                {(() => {
+                                    const dm = Number(geofenceAlert.distance_meters) || 0;
+                                    const dmStr = dm >= 1000 ? `${(dm / 1000).toFixed(1)} km` : `${dm}m`;
+                                    return `Patient Wandered Out of Safe Perimeter (${dmStr} away)!`;
+                                })()}
                             </h3>
                             <p className="text-xs text-red-200 mt-0.5">
                                 Safe boundary is {geofenceAlert.radius_meters || 500}m. Home: {geofenceAlert.home_loc?.address || 'Safe Haven Home'}
@@ -376,9 +380,10 @@ const CaregiverPortal = ({ onNavigate }) => {
                         <button
                             onClick={() => {
                                 playCaregiverBreachSound();
-                                const distText = geofenceAlert.distance_meters >= 1000 
-                                    ? `${(geofenceAlert.distance_meters / 1000).toFixed(1)} kilometers` 
-                                    : `${geofenceAlert.distance_meters} meters`;
+                                const dm = Number(geofenceAlert.distance_meters) || 0;
+                                const distText = dm >= 1000 
+                                    ? `${(dm / 1000).toFixed(1)} kilometers` 
+                                    : `${dm} meters`;
                                 speakBreachAlert(`Emergency Alert: Patient has wandered outside safe perimeter. Currently ${distText} away.`);
                             }}
                             className="px-3.5 py-2.5 bg-red-900/80 hover:bg-red-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer whitespace-nowrap"

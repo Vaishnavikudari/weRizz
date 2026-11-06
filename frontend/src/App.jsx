@@ -35,6 +35,7 @@ import PatientGpsBeacon from './components/PatientGpsBeacon';
 import NavBar from './components/SideNav'; // Imported as NavBar
 
 import PatientTracking from './components/PatientTracking';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import GreetingPage from './pages/GreetingPage';
 
@@ -1157,9 +1158,9 @@ function App() {
 
         <main className={`relative z-10 w-full flex-1 mt-[60px] md:mt-[70px] h-[calc(100dvh-60px)] md:h-[calc(100vh-70px)] ${view === 'patient' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
 
-
-
-          {content}
+          <ErrorBoundary onReset={() => setView('landing')}>
+            {content}
+          </ErrorBoundary>
 
         </main>
 
