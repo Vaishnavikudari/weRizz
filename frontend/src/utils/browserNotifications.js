@@ -95,3 +95,4 @@ export const sendChromeNotification = ({
         return null;
     }
 };
+
