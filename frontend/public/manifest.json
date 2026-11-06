@@ -1,0 +1,15 @@
+{
+  "short_name": "Mavora",
+  "name": "Mavora AI - Dementia Care & Companion",
+  "icons": [
+    {
+      "src": "/assets/glowing_brain.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#070D1E",
+  "theme_color": "#070D1E",
+  "display": "standalone"
+}
