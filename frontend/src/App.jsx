@@ -322,11 +322,24 @@ function App() {
 
         setCurrentPerson(data.person);
 
-        addBotMessage(`I see ${data.person.name}.`, null, data.person.image || null);
+        const personName = data.person.name;
+        const relation = data.person.relation;
+        const hasRelation = relation && relation !== 'Unknown' && relation.toLowerCase() !== 'unknown';
+
+        let personMessage = `This is ${personName}.`;
+        if (selectedLanguage === 'kn') {
+          personMessage = hasRelation ? `ಇವರು ${personName}, ನಿಮ್ಮ ${relation}.` : `ಇವರು ${personName}.`;
+        } else if (selectedLanguage === 'hi') {
+          personMessage = hasRelation ? `यह ${personName} हैं, आपके ${relation}।` : `यह ${personName} हैं।`;
+        } else {
+          personMessage = hasRelation ? `This is ${personName}, your ${relation}.` : `This is ${personName}.`;
+        }
+
+        addBotMessage(personMessage, null, data.person.image || null);
 
         updateSuggestions(data.person);
 
-        speakResponse(`Hello ${data.person.name}.`);
+        speakResponse(personMessage);
 
       } else if (mode === 'object' && data.status === 'identified') {
 

@@ -79,13 +79,11 @@ async def recognize_person(background_tasks: BackgroundTasks, file: UploadFile =
                  relation = best_match.payload.get("relation", "Unknown")
                  notes = best_match.payload.get("notes", "")
                  
-                 # TTS Feedback
-                 greeting = f"Hello {name}."
+                 # Reassuring identity announcement for dementia patient (This is [name], not Hi [name])
+                 rel_text = f", your {relation}" if relation and relation != "Unknown" else ""
+                 greeting = f"This is {name}{rel_text}."
                  if notes:
-                      greeting += f" {notes}"
-                 elif relation != "Unknown":
-                     greeting += f" You are a {relation}."
-                 
+                     greeting += f" {notes}"
                  # background_tasks.add_task(tts_service.speak, greeting)
 
                  return {
