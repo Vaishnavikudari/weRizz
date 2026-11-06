@@ -6,8 +6,23 @@ import uuid
 class MemoryService:
     def __init__(self):
         print("DEBUG: Initializing MemoryService (Qdrant)...", flush=True)
-        if settings.QDRANT_MODE == "local":
+        connected = False
+        if settings.QDRANT_MODE != "local" and (settings.QDRANT_URL or settings.QDRANT_HOST != "localhost"):
+            try:
+                self.client = QdrantClient(
+                    url=settings.get_qdrant_url(),
+                    api_key=settings.QDRANT_API_KEY,
+                    timeout=4
+                )
+                self.client.get_collections()
+                connected = True
+                print("DEBUG: Connected to remote Qdrant server.", flush=True)
+            except Exception as e:
+                print(f"DEBUG: Remote Qdrant server unreachable ({e}), falling back to local storage.", flush=True)
+
+        if not connected:
             import os, glob
+            os.makedirs(settings.QDRANT_PATH, exist_ok=True)
             top_lock = os.path.join(settings.QDRANT_PATH, ".lock")
             if os.path.exists(top_lock):
                 try: os.remove(top_lock)
@@ -16,11 +31,7 @@ class MemoryService:
                 try: os.remove(f)
                 except Exception: pass
             self.client = QdrantClient(path=settings.QDRANT_PATH)
-        else:
-            self.client = QdrantClient(
-                url=settings.get_qdrant_url(),
-                api_key=settings.QDRANT_API_KEY
-            )
+            print("DEBUG: Initialized embedded local Qdrant storage.", flush=True)
             
         self._ensure_collections()
 

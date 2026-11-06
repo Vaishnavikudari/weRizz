@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     QDRANT_PORT: int = 6333
     QDRANT_URL: Optional[str] = None
     QDRANT_API_KEY: Optional[str] = None
-    QDRANT_MODE: str = "server" # 'local' or 'server'
+    QDRANT_MODE: str = "local" # 'local' or 'server' (default 'local' so cloud deploys work out-of-the-box)
     QDRANT_PATH: str = "qdrant_storage"
     
     GROQ_API_KEY: Optional[str] = None
