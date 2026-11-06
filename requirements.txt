@@ -13,10 +13,6 @@ numpy>=1.24.0,<2.3
 sentence-transformers
 edge-tts
 pygame
-openai-whisper
 opencv-python-headless>=4.8.0
 ultralytics
-keras_facenet
-tensorflow-cpu
-tf-keras
 gunicorn

@@ -23,5 +23,11 @@ services:
         value: "0"
       - key: QDRANT_MODE
         value: local
+      - key: USE_FACENET
+        value: "0"
+      - key: USE_TF
+        value: "0"
+      - key: PYTHONUNBUFFERED
+        value: "1"
       - key: GROQ_API_KEY
         sync: false
