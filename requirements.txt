@@ -10,9 +10,7 @@ qdrant-client==1.16.2
 groq==1.0.0
 Pillow==12.0.0
 numpy>=1.24.0,<2.3
-sentence-transformers
 edge-tts
 pygame
 opencv-python-headless>=4.8.0
-ultralytics
 gunicorn
